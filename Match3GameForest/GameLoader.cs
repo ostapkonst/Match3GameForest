@@ -104,7 +104,7 @@ namespace Match3GameForest
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CadetBlue);
+            GraphicsDevice.Clear(Color.White);
             _spriteBatch.Begin();
             _gameLoop.HandleDraw(gameTime);
             _spriteBatch.End();

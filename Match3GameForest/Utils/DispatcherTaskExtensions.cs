@@ -25,7 +25,9 @@ namespace Match3GameForest
 
         // There is no TaskCompletionSource<void> so we use a bool that we throw away.
         public static async Task RunTaskAsync(this CoreDispatcher dispatcher,
-            Func<Task> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal) =>
+            Func<Task> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        {
             await RunTaskAsync(dispatcher, async () => { await func(); return false; }, priority);
+        }
     }
 }

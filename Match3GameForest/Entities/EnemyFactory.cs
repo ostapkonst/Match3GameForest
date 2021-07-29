@@ -12,7 +12,7 @@ namespace Match3GameForest.Entities
         private readonly IList<ITexture2D> _textures;
         private readonly List<string> _enemies;
 
-        public float Scale = 0.3f;
+        public float Scale = 0.5f;
 
         public EnemyFactory(IContentManager contentManager, ISpriteBatch spriteBatch)
         {
