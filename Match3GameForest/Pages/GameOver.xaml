@@ -1,0 +1,14 @@
+﻿<Page
+    x:Class="Match3GameForest.GameOver"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+        <TextBlock Text="Game Over" FontSize="64" FontFamily="Verdana" FontWeight="Bold"/>
+        <Button Click="OkButtonClick" FontSize="20" Content="OK" Background="{x:Null}" HorizontalAlignment="Center"/>
+    </StackPanel>
+</Page>
