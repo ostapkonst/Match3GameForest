@@ -45,7 +45,6 @@ namespace Match3GameForest
             _container = DIConfig.Register(this);
 
             _spriteBatch = _container.Resolve<ISpriteBatch>();
-            _gameLoop = _container.Resolve<IGameLoop>();
             _animateManager = _container.Resolve<IAnimation>();
             _contentManager = _container.Resolve<IContentManager>();
             _gameData = _container.Resolve<GameSettings>();
@@ -58,6 +57,8 @@ namespace Match3GameForest
             _contentManager.Set("field", _gameField);
             _contentManager.Set("settings", _gameData);
             _contentManager.Set("timer", _timer);
+
+            _gameLoop = new GameLoopWrapper(_contentManager);
 
             _timer.OnFinish += GameExitHandler;
             StartGame();

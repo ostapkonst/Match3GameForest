@@ -7,9 +7,9 @@ namespace Match3GameForest.UseCases
 {
     public class DestroyEnemies : GameLoop
     {
-        private readonly Lazy<IAnimation> _animationManager;
-        private readonly Lazy<IGameField> _gameField;
-        private readonly Lazy<GameSettings> _settings;
+        private readonly IAnimation _animationManager;
+        private readonly IGameField _gameField;
+        private readonly GameSettings _settings;
         private bool _update;
 
         public DestroyEnemies(IContentManager contentManager)
@@ -55,10 +55,10 @@ namespace Match3GameForest.UseCases
 
         public override void HandleUpdate(GameInputState state)
         {
-            var am = _animationManager.Value;
+            var am = _animationManager;
 
-            if (!_update && !am.IsAnimate) {
-                DestroyAll(_settings.Value, _gameField.Value, am);
+            if (!_update && !_animationManager.IsAnimate) {
+                DestroyAll(_settings, _gameField, _animationManager);
             }
 
             base.HandleUpdate(state);

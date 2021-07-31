@@ -7,8 +7,8 @@ namespace Match3GameForest.UseCases
 {
     public class UpdateTimer : GameLoop
     {
-        private readonly Lazy<GameSettings> _gameSettings;
-        private readonly Lazy<ITimer> _timer;
+        private readonly GameSettings _gameSettings;
+        private readonly ITimer _timer;
 
         public UpdateTimer(IContentManager contentManager)
         {
@@ -18,16 +18,13 @@ namespace Match3GameForest.UseCases
 
         public override void HandleUpdate(GameInputState state)
         {
-            var settings = _gameSettings.Value;
-            var timer = _timer.Value;
-
-            if (settings.State == GameState.Timed) {
-                timer.Restart();
-                settings.State = GameState.Play;
+            if (_gameSettings.State == GameState.Timed) {
+                _timer.Restart();
+                _gameSettings.State = GameState.Play;
             }
 
-            timer.Update(state.GameTime);
-            settings.TimeLeft = timer.TimeLeft;
+            _timer.Update(state.GameTime);
+            _gameSettings.TimeLeft = _timer.TimeLeft;
 
             base.HandleUpdate(state);
         }

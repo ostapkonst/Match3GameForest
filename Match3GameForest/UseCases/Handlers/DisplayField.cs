@@ -7,8 +7,8 @@ namespace Match3GameForest.UseCases
 {
     public class DisplayField : GameLoop
     {
-        private readonly Lazy<IAnimation> _animateManager;
-        private readonly Lazy<IGameField> _gameField;
+        private readonly IAnimation _animateManager;
+        private readonly IGameField _gameField;
 
         public DisplayField(IContentManager contentManager)
         {
@@ -20,16 +20,16 @@ namespace Match3GameForest.UseCases
 
         public override void HandleUpdate(GameInputState state)
         {
-            _animateManager.Value.Update(state); // сначала запускаем циклы анимации
+            _animateManager.Update(state); // сначала запускаем циклы анимации
 
-            _gameField.Value.Update(state);
+            _gameField.Update(state);
 
             base.HandleUpdate(state);
         }
 
         public override void HandleDraw(GameTime gameTime)
         {
-            _gameField.Value.Draw(gameTime);
+            _gameField.Draw(gameTime);
 
             base.HandleDraw(gameTime);
         }

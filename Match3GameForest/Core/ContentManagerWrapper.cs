@@ -22,16 +22,13 @@ namespace Match3GameForest.Core
             _loaded.Add(assetName, content);
         }
 
-        public Lazy<T> Get<T>(string assetName)
+        public T Get<T>(string assetName)
         {
-            return new Lazy<T>(() =>
-            {
-                try {
-                    return (T)_loaded[assetName];
-                } catch {
-                    throw new ArgumentException($"Failed to get resource: {assetName}");
-                }
-            });
+            try {
+                return (T)_loaded[assetName];
+            } catch {
+                throw new ArgumentException($"Failed to get resource: {assetName}");
+            }
         }
 
         public ITexture2D Load(string assetName)

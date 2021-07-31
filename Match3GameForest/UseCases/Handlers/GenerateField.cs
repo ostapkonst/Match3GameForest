@@ -7,8 +7,8 @@ namespace Match3GameForest.UseCases
 {
     public class GenerateField : GameLoop
     {
-        private readonly Lazy<GameSettings> _gameSettings;
-        private readonly Lazy<IGameField> _gameField;
+        private readonly GameSettings _gameSettings;
+        private readonly IGameField _gameField;
 
         public GenerateField(IContentManager contentManager)
         {
@@ -20,12 +20,10 @@ namespace Match3GameForest.UseCases
 
         public override void HandleUpdate(GameInputState state)
         {
-            var settings = _gameSettings.Value;
-
-            if (settings.State == GameState.Init) {
-                _gameField.Value.GenerateField(settings.MatrixColumns, settings.MatrixRows);
-                settings.GameScore = 0;
-                settings.State = GameState.Timed;
+            if (_gameSettings.State == GameState.Init) {
+                _gameField.GenerateField(_gameSettings.MatrixColumns, _gameSettings.MatrixRows);
+                _gameSettings.GameScore = 0;
+                _gameSettings.State = GameState.Timed;
             }
 
             base.HandleUpdate(state);

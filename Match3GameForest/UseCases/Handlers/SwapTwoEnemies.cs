@@ -8,8 +8,8 @@ namespace Match3GameForest.UseCases
     {
         private IEnemy _firstSelEnemy;
         private IEnemy _secondSelEnemy;
-        private readonly Lazy<IAnimation> _animationManager;
-        private readonly Lazy<IGameField> _gameField;
+        private readonly IAnimation _animationManager;
+        private readonly IGameField _gameField;
 
         public SwapTwoEnemies(IContentManager contentManager)
         {
@@ -79,10 +79,10 @@ namespace Match3GameForest.UseCases
 
         public override void HandleUpdate(GameInputState state)
         {
-            TryToSelect(state, _gameField.Value);
+            TryToSelect(state, _gameField);
 
             if (_firstSelEnemy != null && _secondSelEnemy != null) {
-                SwapSelected(_animationManager.Value, _gameField.Value, _firstSelEnemy, _secondSelEnemy);
+                SwapSelected(_animationManager, _gameField, _firstSelEnemy, _secondSelEnemy);
 
                 RemoveSelection();
             }
