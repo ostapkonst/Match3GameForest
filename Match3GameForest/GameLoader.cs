@@ -16,7 +16,6 @@ namespace Match3GameForest
         private ISpriteBatch _spriteBatch;
         private IGameLoop _gameLoop;
         private IAnimation _animateManager;
-        private IContentManager _contentManager;
         private GameSettings _gameData;
         private IGameField _gameField;
         private ITimer _timer;
@@ -46,22 +45,26 @@ namespace Match3GameForest
 
             _spriteBatch = _container.Resolve<ISpriteBatch>();
             _animateManager = _container.Resolve<IAnimation>();
-            _contentManager = _container.Resolve<IContentManager>();
             _gameData = _container.Resolve<GameSettings>();
-            _gameField = _container.Resolve<IGameField>();
             _timer = _container.Resolve<ITimer>();
+            _gameField = _container.Resolve<IGameField>();
             _screen = _container.Resolve<IScreen>();
 
-            _contentManager.Set("content", _contentManager);
-            _contentManager.Set("animation", _animateManager);
-            _contentManager.Set("field", _gameField);
-            _contentManager.Set("settings", _gameData);
-            _contentManager.Set("timer", _timer);
-
-            _gameLoop = new GameLoopWrapper(_contentManager);
-
+            _gameLoop = new GameLoopWrapper(PrepareCM(_container));
             _timer.OnFinish += GameExitHandler;
             StartGame();
+        }
+
+        private IContentManager PrepareCM(IContainer _container)
+        {
+            var cm = _container.Resolve<IContentManager>();
+
+            cm.Set("animation", _animateManager);
+            cm.Set("field", _gameField);
+            cm.Set("settings", _gameData);
+            cm.Set("timer", _timer);
+
+            return cm;
         }
 
         public void StartGame()
@@ -98,8 +101,8 @@ namespace Match3GameForest
             var currentGameState = UpdateInputStates(gameTime);
             _gameLoop.HandleUpdate(currentGameState);
             _screen.Update(currentGameState, _gameField);
-
             OnUpdate?.Invoke(_gameData);
+
             base.Update(gameTime);
         }
 
@@ -107,10 +110,10 @@ namespace Match3GameForest
         {
             GraphicsDevice.Clear(Color.White);
             _spriteBatch.Begin();
-            _gameLoop.HandleDraw(gameTime);
+            _gameField.Draw(gameTime);
+            OnDraw?.Invoke(_gameData);
             _spriteBatch.End();
 
-            OnDraw?.Invoke(_gameData);
             base.Draw(gameTime);
         }
     }

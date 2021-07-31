@@ -7,6 +7,5 @@ namespace Match3GameForest.UseCases
     {
         IGameLoop Next { get; }
         void HandleUpdate(GameInputState state);
-        void HandleDraw(GameTime gameTime);
     }
 }

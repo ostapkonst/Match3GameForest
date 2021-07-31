@@ -19,7 +19,7 @@ namespace Match3GameForest.UseCases
             FromScale = fromScale;
             _enemy = sprite;
             ToScale = toScale * _enemy.Scale;
-            _enemy.Scale = _enemy.Scale * FromScale;
+            _enemy.Scale *= FromScale;
             _scale = (ToScale - _enemy.Scale) / FrameTime;
             _elapsedTime = 0;
             _finished = false;

@@ -65,7 +65,7 @@ namespace Match3GameForest.UseCases
             {
                 gameField.SwapEnemies(enemy1, enemy2);
 
-                if (gameField.GetSeries().Count == 0) {
+                if (gameField.GetSeries().IsEmpty) {
                     ReturnBack(animation, gameField, enemy1, enemy2);
                 }
             });
@@ -83,7 +83,6 @@ namespace Match3GameForest.UseCases
 
             if (_firstSelEnemy != null && _secondSelEnemy != null) {
                 SwapSelected(_animationManager, _gameField, _firstSelEnemy, _secondSelEnemy);
-
                 RemoveSelection();
             }
 

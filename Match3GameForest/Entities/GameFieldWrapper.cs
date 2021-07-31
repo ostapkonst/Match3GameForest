@@ -13,7 +13,7 @@ namespace Match3GameForest.Entities
 
         private readonly IEnemyFactory _enemyFactory;
         private bool _updateSeries;
-        private List<IList<IEnemy>> _series;
+        private FieldSeries _series;
 
         public int MatrixRows { get; private set; }
         public int MatrixColumns { get; private set; }
@@ -38,7 +38,7 @@ namespace Match3GameForest.Entities
             MatrixColumns = matrixColumns;
             FillMatrix();
             _updateSeries = false;
-            _series = new List<IList<IEnemy>>();
+            _series = new FieldSeries();
         }
 
         private void FillMatrix()
@@ -131,16 +131,17 @@ namespace Match3GameForest.Entities
             return result;
         }
 
-        public IList<IList<IEnemy>> GetSeries()
+        public FieldSeries GetSeries()
         {
-            if (_updateSeries) return _series;
+            if (!_updateSeries) {
+                var series = new List<IList<IEnemy>>();
 
-            _series.Clear();
+                series.AddRange(GetMatchByCol());
+                series.AddRange(GetMatchByRow());
 
-            _series.AddRange(GetMatchByCol());
-            _series.AddRange(GetMatchByRow());
-
-            _updateSeries = true;
+                _series = new FieldSeries(series);
+                _updateSeries = true;
+            }
 
             return _series;
         }
@@ -181,17 +182,18 @@ namespace Match3GameForest.Entities
             FieldMatrix[Y, X] = enemy;
         }
 
-        public IList<IEnemy> Match(IList<IList<IEnemy>> enemies)
+        public FieldSeries Match(FieldSeries enemies)
         {
             var createdEnemies = new List<IEnemy>();
 
-            if (enemies.Count == 0) return createdEnemies;
+            if (enemies.IsEmpty) return new FieldSeries(createdEnemies);
 
-            foreach (var el in enemies) {
-                foreach (var enemy in el) {
-                    enemy.Destroy();
-                }
+            foreach (var enemy in enemies) {
+                enemy.Destroy();
             }
+
+            var shifts = new List<int>();
+            var moves = new List<Tuple<IEnemy, Point>>();
 
             for (var col = 0; col < MatrixColumns; col++) {
                 int shift = 0;
@@ -200,10 +202,20 @@ namespace Match3GameForest.Entities
                     if (!enemy.IsActive) {
                         shift++;
                     } else {
-                        SetPos(enemy, col, row + shift);
+                        var point = new Point(row + shift, col);
+                        moves.Add(new Tuple<IEnemy, Point>(enemy, point));
                     }
                 }
-                for (var row = 0; row < shift; row++) {
+                shifts.Add(shift);
+            }
+
+            foreach (var move in moves) {
+                var pos = move.Item2;
+                SetPos(move.Item1, pos.Y, pos.X);
+            }
+
+            for (var col = 0; col < MatrixColumns; col++) {
+                for (var row = 0; row < shifts[col]; row++) {
                     var en = _enemyFactory.Build();
                     SetPos(en, col, row);
                     createdEnemies.Add(en);
@@ -211,48 +223,7 @@ namespace Match3GameForest.Entities
             }
 
             _updateSeries = false;
-            return createdEnemies;
-        }
-
-        public int CalcScore(IList<IList<IEnemy>> enemies)
-        {
-            var set = new HashSet<IEnemy>();
-
-            foreach (var el in enemies) {
-                foreach (var enemy in el) {
-                    set.Add(enemy);
-                }
-            }
-
-            return set.Sum(x => x.Prize);
-        }
-
-        public void ForSeries(IList<IList<IEnemy>> enemies, Action<IEnemy> action)
-        {
-            var set = new HashSet<IEnemy>();
-
-            foreach (var el in enemies) {
-                foreach (var enemy in el) {
-                    set.Add(enemy);
-                }
-            }
-
-            foreach (var el in set) {
-                action(el);
-            }
-        }
-
-        public void ForSeries(IList<IEnemy> enemies, Action<IEnemy> action)
-        {
-            var set = new HashSet<IEnemy>();
-
-            foreach (var enemy in enemies) {
-                set.Add(enemy);
-            }
-
-            foreach (var el in set) {
-                action(el);
-            }
+            return new FieldSeries(createdEnemies);
         }
     }
 }

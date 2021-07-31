@@ -26,12 +26,5 @@ namespace Match3GameForest.UseCases
 
             base.HandleUpdate(state);
         }
-
-        public override void HandleDraw(GameTime gameTime)
-        {
-            _gameField.Draw(gameTime);
-
-            base.HandleDraw(gameTime);
-        }
     }
 }
