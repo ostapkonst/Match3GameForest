@@ -16,7 +16,7 @@ namespace Match3GameForest
         private ISpriteBatch _spriteBatch;
         private IGameLoop _gameLoop;
         private IAnimation _animateManager;
-        private GameSettings _gameData;
+        public GameSettings GameData { get; private set; }
         private IGameField _gameField;
         private ITimer _timer;
         private IScreen _screen;
@@ -45,14 +45,13 @@ namespace Match3GameForest
 
             _spriteBatch = _container.Resolve<ISpriteBatch>();
             _animateManager = _container.Resolve<IAnimation>();
-            _gameData = _container.Resolve<GameSettings>();
+            GameData = _container.Resolve<GameSettings>();
             _timer = _container.Resolve<ITimer>();
             _gameField = _container.Resolve<IGameField>();
             _screen = _container.Resolve<IScreen>();
 
             _gameLoop = new GameLoopWrapper(PrepareCM(_container));
-            _timer.OnFinish += GameExitHandler;
-            StartGame();
+            _timer.OnFinish += StopGame;
         }
 
         private IContentManager PrepareCM(IContainer _container)
@@ -61,20 +60,23 @@ namespace Match3GameForest
 
             cm.Set("animation", _animateManager);
             cm.Set("field", _gameField);
-            cm.Set("settings", _gameData);
+            cm.Set("settings", GameData);
             cm.Set("timer", _timer);
 
             return cm;
         }
 
-        public void StartGame()
+        public void StartGame(GameSettings pi)
         {
-            _gameData.State = GameState.Init;
+            GameData.MatrixColumns = pi.MatrixColumns;
+            GameData.MatrixRows = pi.MatrixRows;
+            GameData.PlayingDuration = pi.PlayingDuration;
+            GameData.State = GameState.Init;
         }
 
-        private void GameExitHandler()
+        public void StopGame()
         {
-            _gameData.State = GameState.Finish;
+            GameData.State = GameState.Finish;
             OnExit?.Invoke();
         }
 
@@ -85,7 +87,7 @@ namespace Match3GameForest
 
             var viewPort = GraphicsDevice.Viewport;
 
-            var viewSize = new Point(viewPort.Width, viewPort.Height - 60); // Hotfix, MonoGame не учитывает XAML разметку
+            var viewSize = new Point(viewPort.Width, viewPort.Height - 75); // Hotfix, MonoGame не учитывает XAML разметку
 
             return new GameInputState(
                 _currentMouseState,
@@ -101,7 +103,7 @@ namespace Match3GameForest
             var currentGameState = UpdateInputStates(gameTime);
             _gameLoop.HandleUpdate(currentGameState);
             _screen.Update(currentGameState, _gameField);
-            OnUpdate?.Invoke(_gameData);
+            OnUpdate?.Invoke(GameData);
 
             base.Update(gameTime);
         }
@@ -111,7 +113,7 @@ namespace Match3GameForest
             GraphicsDevice.Clear(Color.White);
             _spriteBatch.Begin();
             _gameField.Draw(gameTime);
-            OnDraw?.Invoke(_gameData);
+            OnDraw?.Invoke(GameData);
             _spriteBatch.End();
 
             base.Draw(gameTime);

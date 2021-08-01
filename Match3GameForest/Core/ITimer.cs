@@ -5,7 +5,7 @@ namespace Match3GameForest.Entities
 {
     public interface ITimer
     {
-        void Restart();
+        void Restart(int seconds);
         bool IsActive { get; }
         int TimeLeft { get; }
         void Update(GameTime gameTime);

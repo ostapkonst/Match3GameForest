@@ -41,7 +41,5 @@ namespace Match3GameForest.Entities
             var tileNumber = _random.Next(_enemies.Count);
             return new Enemy(_spriteBatch, _textures[tileNumber], _enemies[tileNumber]) { Scale = Scale };
         }
-
-
     }
 }

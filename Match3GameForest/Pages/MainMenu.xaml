@@ -7,10 +7,48 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-        <Button Click="PlayButtonClick" Width="140" Background="{x:Null}">
+    <StackPanel VerticalAlignment="Center" Background="DarkGray" Padding="20" Width="300">
+        <RelativePanel Padding="5">
+            <ComboBox Name="rowsList" 
+                      ItemsSource="{x:Bind MatrixRange}" 
+                      SelectedValue="{x:Bind defaultValue}" 
+                      Header="Rows" 
+                      FontSize="20" 
+                      Width="100"
+                      RelativePanel.AlignLeftWithPanel="True"/>
+
+            <ComboBox Name="colsList" 
+                      ItemsSource="{x:Bind MatrixRange}"
+                      SelectedValue="{x:Bind defaultValue}"
+                      Header="Columns" 
+                      FontSize="20" 
+                      Width="100"
+                      RelativePanel.AlignRightWithPanel="True"/>
+
+            <ComboBox Name="timeList" 
+                      SelectedIndex="1" 
+                      Header="Time" 
+                      FontSize="20" 
+                      HorizontalAlignment="Stretch"
+                      RelativePanel.Below = "rowsList" 
+                      RelativePanel.AlignRightWithPanel="True"
+                      RelativePanel.AlignLeftWithPanel="True">
+                <x:String>Half a minute</x:String>
+                <x:String>One minute</x:String>
+                <x:String>One and a half minutes</x:String>
+                <x:String>Two minutes</x:String>
+                <x:String>Two and a half minutes</x:String>
+                <x:String>Three minutes</x:String>
+            </ComboBox>
+        </RelativePanel>
+
+        <Button Click="playButton_Click" 
+                Width="140" 
+                Background="{x:Null}" 
+                HorizontalAlignment="Center" 
+                Margin="0,20,0,0">
             <StackPanel>
-                <Image Source="/Assets/PlayButton.png" Height="80"/>
+                <Image Source="/Assets/PlayButton.png" Height="100"/>
                 <TextBlock Text="Play" FontSize="20" HorizontalAlignment="Center"/>
             </StackPanel>
         </Button>

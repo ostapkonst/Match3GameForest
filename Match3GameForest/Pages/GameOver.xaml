@@ -8,7 +8,20 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-        <TextBlock Text="Game Over" FontSize="64" FontFamily="Verdana" FontWeight="Bold"/>
-        <Button Click="OkButtonClick" FontSize="20" Content="OK" Background="{x:Null}" HorizontalAlignment="Center"/>
+        <TextBlock Text="Game Over" FontSize="64" 
+                   FontFamily="Verdana" 
+                   FontWeight="ExtraBold"/>
+
+        <TextBlock x:Name="textScore"
+                   Text="Score" FontSize="32" 
+                   FontFamily="Verdana" 
+                   FontWeight="Bold" 
+                   HorizontalAlignment="Center"/>
+        
+        <Button Click="okButton_Click" FontSize="20" Content="OK" 
+                Background="{x:Null}" 
+                HorizontalAlignment="Center" 
+                Margin="0,10,0,0"
+                FontWeight="Bold"/>
     </StackPanel>
 </Page>

@@ -24,9 +24,7 @@ namespace Match3GameForest.UseCases
 
         public override void Update(GameInputState state)
         {
-            if (_finished) {
-                base.Update(state);
-            } else {
+            if (!_finished) {
                 var milliseconds = (int)state.GameTime.ElapsedGameTime.TotalMilliseconds;
 
                 _elapsedTime += milliseconds;
@@ -37,6 +35,7 @@ namespace Match3GameForest.UseCases
                     _enemy.Position += _direction * milliseconds;
                 }
             }
+            base.Update(state);
         }
     }
 }

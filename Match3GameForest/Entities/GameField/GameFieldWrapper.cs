@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Match3GameForest.Config;
 using Match3GameForest.Core;
@@ -12,6 +13,7 @@ namespace Match3GameForest.Entities
         public IEnemy[,] FieldMatrix { get; private set; }
 
         private readonly IEnemyFactory _enemyFactory;
+        private readonly IBonusFactory _bonusManager;
         private bool _updateSeries;
         private FieldSeries _series;
 
@@ -23,9 +25,14 @@ namespace Match3GameForest.Entities
 
         private readonly IEnemy _blankEnemy;
 
-        public GameFieldWrapper(IEnemyFactory enemyFactory)
+        public event Action<IList<IEnemy>> OnDestroy;
+        public event Action<IList<Tuple<IEnemy, Vector2>>> OnMove;
+        public event Action<IList<IEnemy>> OnCreate;
+
+        public GameFieldWrapper(IEnemyFactory enemyFactory, IBonusFactory bonusManager)
         {
             _enemyFactory = enemyFactory;
+            _bonusManager = bonusManager;
             MatrixRows = MatrixColumns = 0;
             GenerateField(MatrixRows, MatrixColumns);
             _blankEnemy = _enemyFactory.Build();
@@ -78,7 +85,7 @@ namespace Match3GameForest.Entities
             return first.Type == second.Type;
         }
 
-        private IList<IList<IEnemy>> GetMatch(IList<IEnemy> list)
+        private FieldSeries GetMatch(IList<IEnemy> list)
         {
             var tmp = new List<IEnemy>();
             var result = new List<IList<IEnemy>>();
@@ -96,10 +103,10 @@ namespace Match3GameForest.Entities
                 }
             }
 
-            return result;
+            return new FieldSeries(result);
         }
 
-        private IList<IList<IEnemy>> GetMatchByRow()
+        private FieldSeries GetMatchByRow()
         {
             var tmp = new List<IEnemy>();
             var result = new List<IList<IEnemy>>();
@@ -109,13 +116,13 @@ namespace Match3GameForest.Entities
                 for (var col = 0; col < MatrixColumns; col++) {
                     tmp.Add(FieldMatrix[row, col]);
                 }
-                result.AddRange(GetMatch(tmp));
+                result.AddRange(GetMatch(tmp).Series);
             }
 
-            return result;
+            return new FieldSeries(result);
         }
 
-        private IList<IList<IEnemy>> GetMatchByCol()
+        private FieldSeries GetMatchByCol()
         {
             var tmp = new List<IEnemy>();
             var result = new List<IList<IEnemy>>();
@@ -125,10 +132,10 @@ namespace Match3GameForest.Entities
                 for (var row = 0; row < MatrixRows; row++) {
                     tmp.Add(FieldMatrix[row, col]);
                 }
-                result.AddRange(GetMatch(tmp));
+                result.AddRange(GetMatch(tmp).Series);
             }
 
-            return result;
+            return new FieldSeries(result);
         }
 
         public FieldSeries GetSeries()
@@ -136,8 +143,8 @@ namespace Match3GameForest.Entities
             if (!_updateSeries) {
                 var series = new List<IList<IEnemy>>();
 
-                series.AddRange(GetMatchByCol());
-                series.AddRange(GetMatchByRow());
+                series.AddRange(GetMatchByCol().Series);
+                series.AddRange(GetMatchByRow().Series);
 
                 _series = new FieldSeries(series);
                 _updateSeries = true;
@@ -174,27 +181,51 @@ namespace Match3GameForest.Entities
 
         private void SetPos(IEnemy enemy, int X, int Y)
         {
-            var bounds = enemy.GetBounds();
-            var posX = X * bounds.Width + _blankEnemy.ScaledWidth / 2;
-            var posY = Y * bounds.Height + _blankEnemy.ScaledHeight / 2;
-            enemy.Position = new Vector2(posX, posY);
             enemy.MatrixPos = new Point(X, Y);
+            enemy.Position = CalctPos(enemy, enemy.MatrixPos);
             FieldMatrix[Y, X] = enemy;
         }
 
-        public FieldSeries Match(FieldSeries enemies)
+        private void SetPos(IEnemy enemy, Point pos)
         {
-            var createdEnemies = new List<IEnemy>();
+            SetPos(enemy, pos.X, pos.Y);
+        }
 
-            if (enemies.IsEmpty) return new FieldSeries(createdEnemies);
+        private Vector2 CalctPos(IEnemy enemy, Point coord)
+        {
+            var bounds = enemy.GetBounds();
+            var posX = (coord.X * bounds.Width) + (enemy.ScaledWidth / 2);
+            var posY = (coord.Y * bounds.Height) + (enemy.ScaledHeight / 2);
+            return new Vector2(posX, posY);
+        }
+
+        public void Match()
+        {
+            var enemies = GetSeries();
+
+            if (enemies.IsEmpty) return;
+
+            var bonus = _bonusManager.Build(enemies);
+
+            // Удаляем врагов
+            OnDestroy?.Invoke(enemies.Line);
 
             foreach (var enemy in enemies) {
                 enemy.Destroy();
             }
 
+            // Добавляем бонусы
+            foreach (var enemy in bonus) {
+                SetPos(enemy, enemy.MatrixPos);
+            }
+
+            if (!bonus.IsEmpty) {
+                OnCreate?.Invoke(bonus.Line);
+            }
+
+            // Враги падают на пустые клетки
             var shifts = new List<int>();
             var moves = new List<Tuple<IEnemy, Point>>();
-
             for (var col = 0; col < MatrixColumns; col++) {
                 int shift = 0;
                 for (var row = MatrixRows - 1; row >= 0; row--) {
@@ -202,18 +233,32 @@ namespace Match3GameForest.Entities
                     if (!enemy.IsActive) {
                         shift++;
                     } else {
-                        var point = new Point(row + shift, col);
-                        moves.Add(new Tuple<IEnemy, Point>(enemy, point));
+                        if (shift > 0) {
+                            var point = new Point(col, row + shift);
+                            moves.Add(new Tuple<IEnemy, Point>(enemy, point));
+                        }
                     }
                 }
                 shifts.Add(shift);
             }
 
+            var movesVectored = new List<Tuple<IEnemy, Vector2>>();
             foreach (var move in moves) {
-                var pos = move.Item2;
-                SetPos(move.Item1, pos.Y, pos.X);
+                var pos = CalctPos(move.Item1, move.Item2);
+                var tuple = new Tuple<IEnemy, Vector2>(move.Item1, pos);
+                movesVectored.Add(tuple);
             }
 
+            if (movesVectored.Count > 0) {
+                OnMove?.Invoke(movesVectored);
+            }
+
+            foreach (var move in moves) {
+                SetPos(move.Item1, move.Item2);
+            }
+
+            // Создаем новых врагов
+            var createdEnemies = new List<IEnemy>();
             for (var col = 0; col < MatrixColumns; col++) {
                 for (var row = 0; row < shifts[col]; row++) {
                     var en = _enemyFactory.Build();
@@ -222,8 +267,11 @@ namespace Match3GameForest.Entities
                 }
             }
 
+            OnCreate?.Invoke(createdEnemies);
+
             _updateSeries = false;
-            return new FieldSeries(createdEnemies);
         }
+
+        public int Score => GetSeries().Score;
     }
 }

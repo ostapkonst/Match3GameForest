@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Match3GameForest.Core;
-using Microsoft.Xna.Framework;
+using Match3GameForest.Entities;
 
 namespace Match3GameForest.Entities
 {
@@ -14,7 +11,7 @@ namespace Match3GameForest.Entities
             return Line.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return Line.GetEnumerator();
         }
@@ -57,21 +54,5 @@ namespace Match3GameForest.Entities
             Line = set.ToList();
             Series = new List<IList<IEnemy>>() { data };
         }
-    }
-
-    public interface IGameField : IGameObject
-    {
-        void GenerateField(int matrixRows, int matrixColumns);
-
-        int MatrixRows { get; }
-        int MatrixColumns { get; }
-
-        IEnemy GetEnemyByVector(Vector2 position);
-        bool IsNear(IEnemy first, IEnemy second);
-        bool IsSameType(IEnemy first, IEnemy second);
-        void SwapEnemies(IEnemy first, IEnemy second);
-
-        FieldSeries GetSeries();
-        FieldSeries Match(FieldSeries enemies);
     }
 }

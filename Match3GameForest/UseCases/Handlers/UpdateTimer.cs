@@ -5,28 +5,28 @@ using Match3GameForest.Entities;
 
 namespace Match3GameForest.UseCases
 {
-    public class UpdateTimer : GameLoop
+    public class UpdateTimer : IGameLoop
     {
-        private readonly GameSettings _gameSettings;
+        private readonly GameSettings _settings;
         private readonly ITimer _timer;
 
         public UpdateTimer(IContentManager contentManager)
         {
-            _gameSettings = contentManager.Get<GameSettings>("settings");
+            _settings = contentManager.Get<GameSettings>("settings");
             _timer = contentManager.Get<ITimer>("timer");
         }
 
-        public override void HandleUpdate(GameInputState state)
+        public void HandleUpdate(GameInputState state)
         {
-            if (_gameSettings.State == GameState.Timed) {
-                _timer.Restart();
-                _gameSettings.State = GameState.Play;
+            if (_settings.State == GameState.Timed) {
+                _timer.Restart(_settings.PlayingDuration);
+                _settings.State = GameState.Play;
             }
 
-            _timer.Update(state.GameTime);
-            _gameSettings.TimeLeft = _timer.TimeLeft;
+            if (_settings.State != GameState.Play) return;
 
-            base.HandleUpdate(state);
+            _timer.Update(state.GameTime);
+            _settings.TimeLeft = _timer.TimeLeft;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Match3GameForest.Core;
+﻿using System;
+using Match3GameForest.Core;
 using Microsoft.Xna.Framework;
 
 namespace Match3GameForest.Entities
@@ -12,14 +13,14 @@ namespace Match3GameForest.Entities
             : base(spriteBatch, spriteStrip)
         {
             Type = enemyType;
-            Hidden = false;
             IsActive = true;
             _isSelected = false;
+            TouchedTime = DateTime.Now;
         }
 
         public bool IsActive { get; private set; }
 
-        public override Rectangle GetBounds()
+        public Rectangle GetBounds()
         {
             return new Rectangle(
                 (int)Position.X - ScaledWidth / 2,
@@ -30,8 +31,20 @@ namespace Match3GameForest.Entities
 
         public int Prize => 1;
 
+        private Point _matrixPos;
+
+        public event Action<Point> OnChangeMatrixPos;
+
         public string Type { get; private set; }
-        public Point MatrixPos { get; set; }
+
+        public Point MatrixPos
+        {
+            get => _matrixPos; 
+            set {
+                _matrixPos = value;
+                TouchedTime = DateTime.Now;
+            }
+        }
 
         public bool Selected
         {
@@ -49,6 +62,8 @@ namespace Match3GameForest.Entities
                 _isSelected = value;
             }
         }
+
+        public DateTime TouchedTime { get; private set; }
 
         public void Destroy()
         {

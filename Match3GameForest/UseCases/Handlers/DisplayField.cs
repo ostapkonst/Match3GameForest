@@ -1,30 +1,30 @@
 ﻿using System;
+using Match3GameForest.Config;
 using Match3GameForest.Core;
 using Match3GameForest.Entities;
 using Microsoft.Xna.Framework;
 
 namespace Match3GameForest.UseCases
 {
-    public class DisplayField : GameLoop
+    public class DisplayField : IGameLoop
     {
-        private readonly IAnimation _animateManager;
+        private readonly IAnimation _animationManager;
         private readonly IGameField _gameField;
+        private readonly GameSettings settings;
 
         public DisplayField(IContentManager contentManager)
         {
-            _animateManager = contentManager.Get<IAnimation>("animation");
+            _animationManager = contentManager.Get<IAnimation>("animation");
             _gameField = contentManager.Get<IGameField>("field");
-
-            Next = new SwapTwoEnemies(contentManager);
+            settings = contentManager.Get<GameSettings>("settings");
         }
 
-        public override void HandleUpdate(GameInputState state)
+        public void HandleUpdate(GameInputState state)
         {
-            _animateManager.Update(state); // сначала запускаем циклы анимации
+            if (settings.State != GameState.Play) return;
 
+            _animationManager.Update(state); // сначала запускаем циклы анимации
             _gameField.Update(state);
-
-            base.HandleUpdate(state);
         }
     }
 }

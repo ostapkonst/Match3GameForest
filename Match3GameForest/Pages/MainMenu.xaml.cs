@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Match3GameForest.Config;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -20,16 +21,36 @@ namespace Match3GameForest
     /// <summary>
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
     /// </summary>
+    /// 
+
     public sealed partial class MainMenu : Page
     {
+        private int minRange = 6;
+        private int maxRange = 12;
+        private int defaultValue = 8;
+
+        private IList<int> MatrixRange;
+
         public MainMenu()
         {
             this.InitializeComponent();
+
+            MatrixRange = new List<int>();
+
+            for (int i = minRange; i <= maxRange; i++) {
+                MatrixRange.Add(i);
+            }
         }
 
-        private void PlayButtonClick(object sender, RoutedEventArgs e)
+        private void playButton_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(GameScreen), "START");
+            var pi = new GameSettings() {
+                MatrixRows = (int)rowsList.SelectedValue,
+                MatrixColumns = (int)colsList.SelectedValue,
+                PlayingDuration = ((int)timeList.SelectedIndex + 1) * 30,
+            };
+
+            Frame.Navigate(typeof(GameScreen), pi);
         }
     }
 }

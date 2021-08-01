@@ -7,6 +7,6 @@ namespace Match3GameForest.Core
         bool IsAnimate { get; }
         IAnimation Add(IAnimation animation);
         void Update(GameInputState state);
-        Action AfterAnimate { get; set; }
+        void Waite(); // Останавливает вызывающий поток, поэтому вызывать из UseCase/Handlers
     }
 }

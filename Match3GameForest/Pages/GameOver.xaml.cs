@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Match3GameForest.Config;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -27,7 +28,16 @@ namespace Match3GameForest
             this.InitializeComponent();
         }
 
-        private void OkButtonClick(object sender, RoutedEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.Parameter == null) return;
+
+            var pi = (GameSettings)e.Parameter;
+            textScore.Text = $"Score: {pi.GameScore}";
+        }
+
+
+        private void okButton_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(MainMenu));
         }

@@ -8,10 +8,26 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <StackPanel>
-        <StackPanel Height="50" Padding="5">
-            <TextBlock x:Name="textScore" Text="Score" FontSize="15"/>
-            <TextBlock x:Name="textTimeLeft" Text="Time left" FontSize="15"/>
-        </StackPanel>
+        <RelativePanel Padding="5" Height="60">
+            <Button x:Name="exitButton" 
+                    Content="Exit" 
+                    Background="{x:Null}" 
+                    FontSize="17"
+                    RelativePanel.AlignRightWithPanel="True"
+                    RelativePanel.AlignVerticalCenterWithPanel="True" 
+                    Click="exitButton_Click"/>
+
+            <RelativePanel RelativePanel.AlignVerticalCenterWithPanel="True" 
+                           Margin="5,0,0,0">
+                <TextBlock x:Name="textScore" 
+                           Text="Score" 
+                           FontSize="17"/>
+                <TextBlock x:Name="textTimeLeft" 
+                           Text="Time left" 
+                           FontSize="17"
+                           RelativePanel.Below ="textScore"/>
+            </RelativePanel>
+        </RelativePanel>
         <SwapChainPanel x:Name="swapChainPanel"/>
     </StackPanel>
 </Page>

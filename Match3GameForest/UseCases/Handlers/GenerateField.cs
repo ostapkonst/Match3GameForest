@@ -1,32 +1,44 @@
 ﻿using System;
+using System.Collections.Generic;
 using Match3GameForest.Config;
 using Match3GameForest.Core;
 using Match3GameForest.Entities;
 
 namespace Match3GameForest.UseCases
 {
-    public class GenerateField : GameLoop
+    public class GenerateField : IGameLoop
     {
-        private readonly GameSettings _gameSettings;
+        private readonly GameSettings _settings;
+        private readonly IAnimation _animationManager;
         private readonly IGameField _gameField;
 
         public GenerateField(IContentManager contentManager)
         {
+            _animationManager = contentManager.Get<IAnimation>("animation");
             _gameField = contentManager.Get<IGameField>("field");
-            _gameSettings = contentManager.Get<GameSettings>("settings");
+            _settings = contentManager.Get<GameSettings>("settings");
 
-            Next = new DisplayField(contentManager);
+            _gameField.OnCreate += CreateAnimation;
         }
 
-        public override void HandleUpdate(GameInputState state)
+        private void CreateAnimation(IList<IEnemy> series)
         {
-            if (_gameSettings.State == GameState.Init) {
-                _gameField.GenerateField(_gameSettings.MatrixColumns, _gameSettings.MatrixRows);
-                _gameSettings.GameScore = 0;
-                _gameSettings.State = GameState.Timed;
+            var wrap = new AnimationWrapper();
+            foreach (var el in series) {
+                wrap.Add(new RescaleEffect(el, 0.6f, 1f, 450));
             }
+            _animationManager.Add(wrap);
+            wrap.Waite();
+        }
 
-            base.HandleUpdate(state);
+        public void HandleUpdate(GameInputState state)
+        {
+            if (_settings.State != GameState.Init) return;
+
+            _gameField.GenerateField(_settings.MatrixRows, _settings.MatrixColumns);
+            _settings.GameScore = 0;
+            _settings.State = GameState.Timed;
+
         }
     }
 }

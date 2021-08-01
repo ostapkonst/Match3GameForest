@@ -53,20 +53,27 @@ namespace Match3GameForest
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter.ToString() == "START") {
-                _game.StartGame();
-            }
+            if (e.Parameter == null) return;
+
+            var pi = (GameSettings)e.Parameter;
+            _game.StartGame(pi);
         }
 
         public void NavigateToGameOver()
         {
             Func<Task> func = () =>
             {
-                Frame.Navigate(typeof(GameOver));
+                Frame.Navigate(typeof(GameOver), _game.GameData);
                 return Task.CompletedTask;
             };
 
             _ = _currentWindows.RunTaskAsync(func);
+        }
+
+        private void exitButton_Click(object sender, RoutedEventArgs e)
+        {
+            _game.StopGame();
+            Frame.Navigate(typeof(GameOver), _game.GameData);
         }
     }
 }

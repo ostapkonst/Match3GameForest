@@ -9,14 +9,15 @@ namespace Match3GameForest.Entities
         private int _duration;
         private int _elapsedTime;
 
-        public Timer(GameSettings gameSettings)
+        public Timer()
         {
-            _duration = gameSettings.PlayingDuration * 1000;
+            _duration = 0;
             _elapsedTime = 0;
         }
 
-        public void Restart()
+        public void Restart(int seconds)
         {
+            _duration = seconds * 1000;
             _elapsedTime = 0;
         }
 

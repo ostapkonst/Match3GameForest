@@ -5,8 +5,15 @@ namespace Match3GameForest.Core
 {
     public abstract class Sprite : ISprite
     {
-        public Color Lightning { get; set; }
-        public float Scale { get; set; }
+        public Color Lightning
+        {
+            get => _lightning;
+            set {
+                _lightning = value;
+                OnLightning?.Invoke(value);
+            }
+        }
+
         public Guid Id { get; private set; }
 
         private readonly ISpriteBatch _spriteBatch;
@@ -28,7 +35,7 @@ namespace Match3GameForest.Core
         public bool Paused { get; set; }
         public bool Hidden { get; set; }
 
-        public void Update(GameInputState state)
+        public virtual void Update(GameInputState state)
         {
             if (Paused) return;
 
@@ -39,7 +46,7 @@ namespace Match3GameForest.Core
             AfterUpdate?.Invoke(state);
         }
 
-        public void Draw(GameTime gameTime)
+        public virtual void Draw(GameTime gameTime)
         {
             if (Hidden) return;
 
@@ -56,7 +63,28 @@ namespace Match3GameForest.Core
             AfterDraw?.Invoke(gameTime);
         }
 
-        public Vector2 Position { get; set; }
+        private Vector2 _position;
+
+        public Vector2 Position
+        {
+            get => _position;
+            set {
+                _position = value;
+                OnPosition?.Invoke(value);
+            }
+        }
+
+        private float _scale;
+        private Color _lightning;
+
+        public float Scale
+        {
+            get => _scale;
+            set {
+                _scale = value;
+                OnScale?.Invoke(_scale);
+            }
+        }
 
         public int ScaledWidth => (int)(FrameWidth * Scale);
 
@@ -66,11 +94,20 @@ namespace Match3GameForest.Core
 
         private int FrameHeight => _spriteStrip.Height;
 
-        public abstract Rectangle GetBounds();
+        public object Clone()
+        {
+            var sprite = (Sprite)MemberwiseClone();
+            sprite.Id = Guid.NewGuid();
+            return sprite;
+        }
 
-        protected event Action<GameInputState> BeforeUpdate;
-        protected event Action<GameInputState> AfterUpdate;
-        protected event Action<GameTime> BeforeDraw;
-        protected event Action<GameTime> AfterDraw;
+        public event Action<GameInputState> BeforeUpdate;
+        public event Action<GameInputState> AfterUpdate;
+        public event Action<GameTime> BeforeDraw;
+        public event Action<GameTime> AfterDraw;
+        public event Action<float> OnScale;
+        public event Action<Vector2> OnPosition
+            ;
+        public event Action<Color> OnLightning;
     }
 }
