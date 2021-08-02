@@ -104,6 +104,8 @@
     <Compile Include="Core\Graphics\IScreen.cs" />
     <Compile Include="Core\Graphics\ScreenWrapper.cs" />
     <Compile Include="Core\IContentManager.cs" />
+    <Compile Include="Core\Sound\SoundEffectWrapper.cs" />
+    <Compile Include="Core\Sound\ISoundEffect.cs" />
     <Compile Include="Core\ITimer.cs" />
     <Compile Include="Core\Timer.cs" />
     <Compile Include="Entities\Bonus\Bonus.cs" />
@@ -153,6 +155,7 @@
   <ItemGroup>
     <Content Include="Assets\SplashScreen.png" />
     <Content Include="Assets\PlayButton.png" />
+    <Content Include="Content\BackgroundSound.mp3" />
     <Content Include="Content\BlueDrop.png" />
     <Content Include="Content\BombBonus.png" />
     <Content Include="Content\GreenLeaf.png" />

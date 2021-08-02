@@ -17,7 +17,7 @@ namespace Match3GameForest.Entities
         public BonusFactory(IContentManager contentManager, ISpriteBatch spriteBatch)
         {
             _bonuses = new IBonus[] {
-                new Bonus(spriteBatch, contentManager.Load("BombBonus")) { Scale = Scale},
+                new Bonus(spriteBatch, contentManager.LoadTexture("BombBonus")) { Scale = Scale},
             };
         }
 

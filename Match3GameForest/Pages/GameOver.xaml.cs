@@ -36,7 +36,6 @@ namespace Match3GameForest
             textScore.Text = $"Score: {pi.GameScore}";
         }
 
-
         private void okButton_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(MainMenu));

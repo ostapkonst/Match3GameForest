@@ -1,21 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Match3GameForest.Core;
 using Microsoft.Xna.Framework;
 
 namespace Match3GameForest.UseCases
 {
-    public class GameLoopWrapper : IGameLoop
+    public class GameLoopWrapper : IDisposable 
     {
-        private IDictionary<IGameLoop, Task> dictionaryUpdate;
-        private IList<IGameLoop> handlers;
+        private IDictionary<IGameLoop, Task> _dictionaryUpdate;
+        private IList<IGameLoop> _handlers;
+        private CancellationTokenSource _cts;
+        private CancellationToken _ct;
 
         public GameLoopWrapper(IContentManager contentManager)
         {
-            dictionaryUpdate = new Dictionary<IGameLoop, Task>();
+            _dictionaryUpdate = new Dictionary<IGameLoop, Task>();
 
-            handlers = new List<IGameLoop>() {
+            GenerateToken();
+
+            _handlers = new List<IGameLoop>() {
                 new GenerateField(contentManager),
                 new DestroyEnemies(contentManager),
                 new DisplayField(contentManager),
@@ -24,24 +30,40 @@ namespace Match3GameForest.UseCases
             };
         }
 
+        private void GenerateToken()
+        {
+            _cts = new CancellationTokenSource();
+            _ct = _cts.Token;
+        }
+
         private void CreateUpdateTask(IGameLoop key, GameInputState state)
         {
-            if (dictionaryUpdate.TryGetValue(key, out Task task))
-                if (task.IsCompleted)
-                    dictionaryUpdate.Remove(key);
+            if (_dictionaryUpdate.TryGetValue(key, out Task task))
+                if (task.Status != TaskStatus.Running)
+                    _dictionaryUpdate.Remove(key);
                 else
                     return;
 
-            var newTask = new Task(() => key.HandleUpdate(state));
-            dictionaryUpdate.Add(key, newTask);
-            newTask.Start();
+            var newTask = Task.Factory.StartNew(() => key.HandleUpdate(state), _ct);
+            _dictionaryUpdate.Add(key, newTask);
+         }
+
+        public void Update(GameInputState state)
+        {
+            foreach (var handle in _handlers) {
+                CreateUpdateTask(handle, state);
+            }
         }
 
-        public void HandleUpdate(GameInputState state)
+        public void CancelTasks()
         {
-            foreach (var handel in handlers) {
-                CreateUpdateTask(handel, state);
-            }
+            _cts.Cancel();
+            GenerateToken();
+        }
+
+        public void Dispose()
+        {
+            CancelTasks();
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Match3GameForest
             _currentWindows = CoreWindow.GetForCurrentThread().Dispatcher;
 
             _game.OnDraw += DisplayOnPage;
-            _game.OnExit += NavigateToGameOver;
+            _game.OnStop += NavigateToGameOver;
         }
 
         public void DisplayOnPage(GameSettings gameData)

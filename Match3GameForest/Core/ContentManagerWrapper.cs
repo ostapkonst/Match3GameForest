@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Match3GameForest.Config;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -31,10 +32,16 @@ namespace Match3GameForest.Core
             }
         }
 
-        public ITexture2D Load(string assetName)
+        public ITexture2D LoadTexture(string assetName)
         {
             var texture = _contentManager.Load<Texture2D>(assetName);
             return new Texture2DWrapper(texture);
+        }
+
+        public ISoundEffect LoadSound(string assetName)
+        {
+            var texture = _contentManager.Load<SoundEffect>(assetName);
+            return new SoundEffectWrapper(texture);
         }
     }
 }

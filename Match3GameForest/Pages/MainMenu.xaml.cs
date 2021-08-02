@@ -21,7 +21,6 @@ namespace Match3GameForest
     /// <summary>
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
     /// </summary>
-    /// 
 
     public sealed partial class MainMenu : Page
     {
@@ -34,6 +33,8 @@ namespace Match3GameForest
         public MainMenu()
         {
             this.InitializeComponent();
+
+            this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Required;
 
             MatrixRange = new List<int>();
 
@@ -48,6 +49,7 @@ namespace Match3GameForest
                 MatrixRows = (int)rowsList.SelectedValue,
                 MatrixColumns = (int)colsList.SelectedValue,
                 PlayingDuration = ((int)timeList.SelectedIndex + 1) * 30,
+                PlaySound = soundControl.IsOn
             };
 
             Frame.Navigate(typeof(GameScreen), pi);

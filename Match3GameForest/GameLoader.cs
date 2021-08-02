@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using Match3GameForest.UseCases;
+using System.Threading.Tasks;
 
 namespace Match3GameForest
 {
@@ -14,7 +15,7 @@ namespace Match3GameForest
     {
         private IContainer _container;
         private ISpriteBatch _spriteBatch;
-        private IGameLoop _gameLoop;
+        private GameLoopWrapper _gameLoop;
         private IAnimation _animateManager;
         public GameSettings GameData { get; private set; }
         private IGameField _gameField;
@@ -24,9 +25,13 @@ namespace Match3GameForest
         private MouseState _currentMouseState;
         private MouseState _previousMouseState;
 
+        private ISoundEffect _soundEffect;
+
         public event Action<GameSettings> OnUpdate;
         public event Action<GameSettings> OnDraw;
-        public event Action OnExit;
+
+        public event Action OnStart;
+        public event Action OnStop;
 
         public GameLoader()
         {
@@ -50,8 +55,21 @@ namespace Match3GameForest
             _gameField = _container.Resolve<IGameField>();
             _screen = _container.Resolve<IScreen>();
 
-            _gameLoop = new GameLoopWrapper(PrepareCM(_container));
+            var cm = PrepareCM(_container);
+            _gameLoop = new GameLoopWrapper(cm);
+            _soundEffect = PrepareSound(cm);
+
             _timer.OnFinish += StopGame;
+        }
+
+        private ISoundEffect PrepareSound(IContentManager cm)
+        {
+            var sound = cm.LoadSound("BackgroundSound");
+
+            sound.IsLooped = true;
+            sound.Volume = 0.8f;
+
+            return sound;
         }
 
         private IContentManager PrepareCM(IContainer _container)
@@ -71,13 +89,22 @@ namespace Match3GameForest
             GameData.MatrixColumns = pi.MatrixColumns;
             GameData.MatrixRows = pi.MatrixRows;
             GameData.PlayingDuration = pi.PlayingDuration;
+            GameData.PlaySound = pi.PlaySound;
+            if (GameData.PlaySound) {
+                _soundEffect.Play();
+            }
             GameData.State = GameState.Init;
+            _gameLoop.CancelTasks();
+            OnStart?.Invoke();
         }
 
         public void StopGame()
         {
+            if (GameData.PlaySound) {
+                _soundEffect.Stop();
+            }
             GameData.State = GameState.Finish;
-            OnExit?.Invoke();
+            OnStop?.Invoke();
         }
 
         private GameInputState UpdateInputStates(GameTime gameTime)
@@ -101,9 +128,15 @@ namespace Match3GameForest
         protected override void Update(GameTime gameTime)
         {
             var currentGameState = UpdateInputStates(gameTime);
-            _gameLoop.HandleUpdate(currentGameState);
-            _screen.Update(currentGameState, _gameField);
-            OnUpdate?.Invoke(GameData);
+
+            if (GameData.State != GameState.Finish) {
+                _gameLoop.Update(currentGameState);
+            }
+
+            if (GameData.State == GameState.Play) {
+                _screen.Update(currentGameState, _gameField);
+                OnUpdate?.Invoke(GameData);
+            }
 
             base.Update(gameTime);
         }
@@ -111,10 +144,13 @@ namespace Match3GameForest
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.White);
-            _spriteBatch.Begin();
-            _gameField.Draw(gameTime);
-            OnDraw?.Invoke(GameData);
-            _spriteBatch.End();
+
+            if (GameData.State == GameState.Play) {
+                _spriteBatch.Begin();
+                _gameField.Draw(gameTime);
+                OnDraw?.Invoke(GameData);
+                _spriteBatch.End();
+            }
 
             base.Draw(gameTime);
         }

@@ -32,7 +32,7 @@ namespace Match3GameForest.Entities
             _enemies.AddRange(_list);
 
             foreach (var enemy in _enemies) {
-                _textures.Add(contentManager.Load(enemy));
+                _textures.Add(contentManager.LoadTexture(enemy));
             }
         }
 

@@ -33,8 +33,6 @@ namespace Match3GameForest.Entities
 
         private Point _matrixPos;
 
-        public event Action<Point> OnChangeMatrixPos;
-
         public string Type { get; private set; }
 
         public Point MatrixPos
