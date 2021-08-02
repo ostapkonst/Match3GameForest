@@ -45,7 +45,6 @@ namespace Match3GameForest.Entities
             MatrixColumns = matrixColumns;
             FillMatrix();
             _updateSeries = false;
-            _series = new FieldSeries();
         }
 
         private void FillMatrix()
@@ -75,8 +74,8 @@ namespace Match3GameForest.Entities
         public bool IsNear(IEnemy first, IEnemy second)
         {
             if (!first.IsActive || !second.IsActive) return false;
-            return (Math.Abs(first.MatrixPos.X - second.MatrixPos.X) +
-                Math.Abs(first.MatrixPos.Y - second.MatrixPos.Y)) <= 1;
+            return (Math.Abs(first.GetMatrixPos.X - second.GetMatrixPos.X) +
+                Math.Abs(first.GetMatrixPos.Y - second.GetMatrixPos.Y)) <= 1;
         }
 
         public bool IsSameType(IEnemy first, IEnemy second)
@@ -155,12 +154,15 @@ namespace Match3GameForest.Entities
 
         public void SwapEnemies(IEnemy first, IEnemy second)
         {
-            FieldMatrix[first.MatrixPos.Y, first.MatrixPos.X] = second;
-            FieldMatrix[second.MatrixPos.Y, second.MatrixPos.X] = first;
+            var p1 = first.GetMatrixPos;
+            var p2 = second.GetMatrixPos;
 
-            var tmpMPos = first.MatrixPos;
-            first.MatrixPos = second.MatrixPos;
-            second.MatrixPos = tmpMPos;
+            FieldMatrix[p1.Y, p1.X] = second;
+            FieldMatrix[p2.Y, p2.X] = first;
+
+            var tmpMPos = first.GetMatrixPos;
+            first.GetMatrixPos = second.GetMatrixPos;
+            second.GetMatrixPos = tmpMPos;
 
             _updateSeries = false;
         }
@@ -181,17 +183,21 @@ namespace Match3GameForest.Entities
 
         private void SetPos(IEnemy enemy, int X, int Y)
         {
-            enemy.MatrixPos = new Point(X, Y);
-            enemy.Position = CalctPos(enemy, enemy.MatrixPos);
+            var newPos = new MatrixPos(X, Y);
+
+            enemy.GetMatrixPos = newPos;
+            enemy.Position = CalctPos(enemy, enemy.GetMatrixPos);
             FieldMatrix[Y, X] = enemy;
+
+            _updateSeries = false;
         }
 
-        private void SetPos(IEnemy enemy, Point pos)
+        private void SetPos(IEnemy enemy, MatrixPos pos)
         {
             SetPos(enemy, pos.X, pos.Y);
         }
 
-        private Vector2 CalctPos(IEnemy enemy, Point coord)
+        private Vector2 CalctPos(IEnemy enemy, MatrixPos coord)
         {
             var bounds = enemy.GetBounds();
             var posX = (coord.X * bounds.Width) + (enemy.ScaledWidth / 2);
@@ -216,7 +222,7 @@ namespace Match3GameForest.Entities
 
             // Добавляем бонусы
             foreach (var enemy in bonus) {
-                SetPos(enemy, enemy.MatrixPos);
+                SetPos(enemy, enemy.GetMatrixPos);
             }
 
             if (!bonus.IsEmpty) {
@@ -225,7 +231,7 @@ namespace Match3GameForest.Entities
 
             // Враги падают на пустые клетки
             var shifts = new List<int>();
-            var moves = new List<Tuple<IEnemy, Point>>();
+            var moves = new List<Tuple<IEnemy, MatrixPos>>();
             for (var col = 0; col < MatrixColumns; col++) {
                 int shift = 0;
                 for (var row = MatrixRows - 1; row >= 0; row--) {
@@ -234,8 +240,8 @@ namespace Match3GameForest.Entities
                         shift++;
                     } else {
                         if (shift > 0) {
-                            var point = new Point(col, row + shift);
-                            moves.Add(new Tuple<IEnemy, Point>(enemy, point));
+                            var point = new MatrixPos(col, row + shift);
+                            moves.Add(new Tuple<IEnemy, MatrixPos>(enemy, point));
                         }
                     }
                 }
@@ -268,8 +274,6 @@ namespace Match3GameForest.Entities
             }
 
             OnCreate?.Invoke(createdEnemies);
-
-            _updateSeries = false;
         }
 
         public int Score => GetSeries().Score;

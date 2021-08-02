@@ -23,10 +23,10 @@ namespace Match3GameForest.UseCases
                 _settings.State = GameState.Play;
             }
 
-            if (_settings.State != GameState.Play) return;
-
-            _timer.Update(state.GameTime);
-            _settings.TimeLeft = _timer.TimeLeft;
+            if (_settings.State == GameState.Play) {
+                _timer.Update(state.GameTime);
+                _settings.TimeLeft = _timer.TimeLeft;
+            }
         }
     }
 }

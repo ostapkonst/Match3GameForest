@@ -33,12 +33,11 @@ namespace Match3GameForest.UseCases
 
         public void HandleUpdate(GameInputState state)
         {
-            if (_settings.State != GameState.Init) return;
-
-            _gameField.GenerateField(_settings.MatrixRows, _settings.MatrixColumns);
-            _settings.GameScore = 0;
-            _settings.State = GameState.Timed;
-
+            if (_settings.State == GameState.Init) {
+                _gameField.GenerateField(_settings.MatrixRows, _settings.MatrixColumns);
+                _settings.GameScore = 0;
+                _settings.State = GameState.Timed;
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Match3GameForest.Config;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -34,7 +35,7 @@ namespace Match3GameForest
         {
             this.InitializeComponent();
 
-            this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Required;
+            this.NavigationCacheMode = NavigationCacheMode.Required;
 
             MatrixRange = new List<int>();
 

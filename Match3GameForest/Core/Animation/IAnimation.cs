@@ -2,7 +2,7 @@
 
 namespace Match3GameForest.Core
 {
-    public interface IAnimation
+    public interface IAnimation : IDisposable
     {
         bool IsAnimate { get; }
         IAnimation Add(IAnimation animation);

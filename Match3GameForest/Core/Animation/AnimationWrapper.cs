@@ -13,7 +13,7 @@ namespace Match3GameForest.Core
     {
         protected readonly ConcurrentBag<IAnimation> _animations;
         protected readonly ConcurrentBag<ManualResetEvent> _tokenSource;
-        protected bool _finished;
+        protected volatile bool _finished;
 
         public AnimationWrapper()
         {
@@ -51,8 +51,15 @@ namespace Match3GameForest.Core
             foreach (var token in _tokenSource) {
                 token.Set();
             }
-            _tokenSource.Clear();
+        }
 
+        public void Dispose()
+        {
+            foreach (var animation in _animations) {
+                animation.Dispose();
+            }
+            _tokenSource.Clear();
+            _animations.Clear();
         }
     }
 }

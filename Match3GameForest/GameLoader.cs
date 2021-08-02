@@ -56,8 +56,9 @@ namespace Match3GameForest
             _screen = _container.Resolve<IScreen>();
 
             var cm = PrepareCM(_container);
-            _gameLoop = new GameLoopWrapper(cm);
             _soundEffect = PrepareSound(cm);
+
+            _gameLoop = new GameLoopWrapper(cm);
 
             _timer.OnFinish += StopGame;
         }
@@ -86,6 +87,9 @@ namespace Match3GameForest
 
         public void StartGame(GameSettings pi)
         {
+            _gameLoop.Dispose();       // Порядок запуска 
+            _animateManager.Dispose(); // важен
+
             GameData.MatrixColumns = pi.MatrixColumns;
             GameData.MatrixRows = pi.MatrixRows;
             GameData.PlayingDuration = pi.PlayingDuration;
@@ -93,8 +97,9 @@ namespace Match3GameForest
             if (GameData.PlaySound) {
                 _soundEffect.Play();
             }
+
             GameData.State = GameState.Init;
-            _gameLoop.CancelTasks();
+
             OnStart?.Invoke();
         }
 
@@ -103,7 +108,9 @@ namespace Match3GameForest
             if (GameData.PlaySound) {
                 _soundEffect.Stop();
             }
+
             GameData.State = GameState.Finish;
+
             OnStop?.Invoke();
         }
 
@@ -129,12 +136,15 @@ namespace Match3GameForest
         {
             var currentGameState = UpdateInputStates(gameTime);
 
+            _animateManager.Update(currentGameState);
+
             if (GameData.State != GameState.Finish) {
                 _gameLoop.Update(currentGameState);
             }
 
             if (GameData.State == GameState.Play) {
                 _screen.Update(currentGameState, _gameField);
+                _gameField.Update(currentGameState);
                 OnUpdate?.Invoke(GameData);
             }
 

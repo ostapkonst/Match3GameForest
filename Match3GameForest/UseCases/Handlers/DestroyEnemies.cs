@@ -44,7 +44,7 @@ namespace Match3GameForest.UseCases
             wrap.Waite();
         }
 
-        private void DestroyAll(GameSettings _settings, IGameField gameField, IAnimation animation)
+        private void DestroyAll(GameSettings _settings, IGameField gameField)
         {
             var score = gameField.Score;
 
@@ -57,9 +57,9 @@ namespace Match3GameForest.UseCases
 
         public void HandleUpdate(GameInputState state)
         {
-            if (_settings.State != GameState.Play) return;
-
-            DestroyAll(_settings, _gameField, _animationManager);
+            if (_settings.State == GameState.Play) {
+                DestroyAll(_settings, _gameField);
+            }
         }
     }
 }

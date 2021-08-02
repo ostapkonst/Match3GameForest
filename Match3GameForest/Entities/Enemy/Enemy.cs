@@ -31,11 +31,11 @@ namespace Match3GameForest.Entities
 
         public int Prize => 1;
 
-        private Point _matrixPos;
+        private MatrixPos _matrixPos;
 
         public string Type { get; private set; }
 
-        public Point MatrixPos
+        public MatrixPos GetMatrixPos
         {
             get => _matrixPos; 
             set {

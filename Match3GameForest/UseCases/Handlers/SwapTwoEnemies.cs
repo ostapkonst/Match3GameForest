@@ -75,7 +75,6 @@ namespace Match3GameForest.UseCases
                 SwapSelected(_animationManager, _gameField, _firstSelEnemy, _secondSelEnemy);
                 _firstSelEnemy = _secondSelEnemy = null;
             }
-
         }
     }
 }

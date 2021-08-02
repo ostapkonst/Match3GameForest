@@ -111,6 +111,7 @@
     <Compile Include="Entities\Bonus\Bonus.cs" />
     <Compile Include="Entities\Bonus\BonusFactory.cs" />
     <Compile Include="Entities\Bonus\IBonusFactory.cs" />
+    <Compile Include="Entities\Enemy\MatrixPos.cs" />
     <Compile Include="Entities\GameField\FieldSeries.cs" />
     <Compile Include="Entities\Bonus\IBonus.cs" />
     <Compile Include="UseCases\Handlers\UpdateTimer.cs" />
@@ -143,7 +144,6 @@
     <Compile Include="Entities\Enemy\EnemyFactory.cs" />
     <Compile Include="Entities\Enemy\IEnemy.cs" />
     <Compile Include="Entities\Enemy\IEnemyFactory.cs" />
-    <Compile Include="UseCases\Handlers\DisplayField.cs" />
     <Compile Include="UseCases\Handlers\SwapTwoEnemies.cs" />
     <Compile Include="UseCases\Effects\MoveToEffect.cs" />
   </ItemGroup>

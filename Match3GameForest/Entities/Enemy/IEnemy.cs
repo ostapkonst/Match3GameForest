@@ -13,6 +13,6 @@ namespace Match3GameForest.Entities
         bool Selected { get; set; }
         string Type { get; }
         DateTime TouchedTime { get; }
-        Point MatrixPos { get; set; }
+        MatrixPos GetMatrixPos { get; set; }
     }
 }

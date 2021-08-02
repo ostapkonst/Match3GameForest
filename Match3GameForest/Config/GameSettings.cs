@@ -8,10 +8,9 @@
         Finish,
     }
 
-    // Для механики игры
     public class GameSettings
     {
-        public GameState State { get; set; } = GameState.Finish;
+        public volatile GameState State = GameState.Finish;
 
         public int PlayingDuration { get; set; } = 60;
         public int MatrixColumns { get; set; } = 8;
