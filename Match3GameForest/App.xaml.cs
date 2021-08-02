@@ -31,6 +31,8 @@ namespace Match3GameForest
         {
             this.InitializeComponent();
 
+            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
+
             this.Suspending += OnSuspending;
         }
 
