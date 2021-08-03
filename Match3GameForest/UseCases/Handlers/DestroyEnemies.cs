@@ -21,7 +21,6 @@ namespace Match3GameForest.UseCases
             _settings = contentManager.Get<GameSettings>("settings");
 
             _gameField.OnDestroy += DestroyAnimation;
-            _gameField.OnMove += MoveAnimation;
         }
 
         private void DestroyAnimation(IList<IEnemy> series)
@@ -34,17 +33,7 @@ namespace Match3GameForest.UseCases
             wrap.Waite();
         }
 
-        private void MoveAnimation(IList<Tuple<IEnemy, Vector2>> series)
-        {
-            var wrap = new AnimationWrapper();
-            foreach (var el in series) {
-                wrap.Add(new MoveToEffect(el.Item1, el.Item2, 650));
-            }
-            _animationManager.Add(wrap);
-            wrap.Waite();
-        }
-
-        private void DestroyAll(GameSettings _settings, IGameField gameField)
+        private void DestroyAll(GameSettings settings, IGameField gameField)
         {
             var score = gameField.Score;
 
@@ -52,7 +41,7 @@ namespace Match3GameForest.UseCases
 
             gameField.Match();
 
-            _settings.GameScore += score;
+            settings.GameScore += score;
         }
 
         public void HandleUpdate(GameInputState state)

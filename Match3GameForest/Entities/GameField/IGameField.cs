@@ -6,7 +6,13 @@ using Match3GameForest.Core;
 using Microsoft.Xna.Framework;
 
 namespace Match3GameForest.Entities
-{ 
+{
+    public enum FieldStatus
+    {
+        Destruction,
+        Stable
+    }
+
     public interface IGameField : IGameObject
     {
         void GenerateField(int matrixRows, int matrixColumns);
@@ -14,11 +20,16 @@ namespace Match3GameForest.Entities
         int MatrixRows { get; }
         int MatrixColumns { get; }
 
+        FieldStatus Status { get; set; }
+
         IEnemy GetEnemyByVector(Vector2 position);
         bool IsNear(IEnemy first, IEnemy second);
         bool IsSameType(IEnemy first, IEnemy second);
         void SwapEnemies(IEnemy first, IEnemy second);
-        FieldSeries GetSeries();
+        void DestroyEnemies(FieldSeries enemies);
+
+        FieldSeries GetField();
+        FieldSeries GetMatchSeries();
 
         int Score { get; }
         void Match();

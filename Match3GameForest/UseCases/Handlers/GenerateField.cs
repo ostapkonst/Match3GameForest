@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Match3GameForest.Config;
 using Match3GameForest.Core;
 using Match3GameForest.Entities;
+using Microsoft.Xna.Framework;
 
 namespace Match3GameForest.UseCases
 {
@@ -19,6 +20,7 @@ namespace Match3GameForest.UseCases
             _settings = contentManager.Get<GameSettings>("settings");
 
             _gameField.OnCreate += CreateAnimation;
+            _gameField.OnMove += MoveAnimation;
         }
 
         private void CreateAnimation(IList<IEnemy> series)
@@ -31,12 +33,31 @@ namespace Match3GameForest.UseCases
             wrap.Waite();
         }
 
+        private void MoveAnimation(IList<Tuple<IEnemy, Vector2>> series)
+        {
+            var wrap = new AnimationWrapper();
+            foreach (var el in series) {
+                wrap.Add(new MoveToEffect(el.Item1, el.Item2, 650));
+            }
+            _animationManager.Add(wrap);
+            wrap.Waite();
+        }
+
+        private void RefreshAll()
+        {
+
+        }
+
         public void HandleUpdate(GameInputState state)
         {
             if (_settings.State == GameState.Init) {
                 _gameField.GenerateField(_settings.MatrixRows, _settings.MatrixColumns);
                 _settings.GameScore = 0;
                 _settings.State = GameState.Timed;
+            }
+
+            if (_settings.State == GameState.Play) {
+                RefreshAll();
             }
         }
     }

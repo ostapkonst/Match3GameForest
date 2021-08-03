@@ -14,5 +14,7 @@ namespace Match3GameForest.Entities
         string Type { get; }
         DateTime TouchedTime { get; }
         MatrixPos GetMatrixPos { get; set; }
+
+        event Action OnDestroy;
     }
 }

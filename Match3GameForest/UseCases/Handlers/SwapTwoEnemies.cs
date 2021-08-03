@@ -2,6 +2,7 @@
 using Match3GameForest.Core;
 using System;
 using Match3GameForest.Config;
+using System.Diagnostics;
 
 namespace Match3GameForest.UseCases
 {
@@ -46,7 +47,6 @@ namespace Match3GameForest.UseCases
             var act2 = new MoveToEffect(enemy2, enemy1.Position, 400);
 
             wrap.Add(act1).Add(act2);
-
             animation.Add(wrap);
             wrap.Waite();
         }
@@ -64,16 +64,21 @@ namespace Match3GameForest.UseCases
             }
         }
 
-        public void HandleUpdate(GameInputState state)
+        void SwapEnemies(GameInputState state, IGameField gameField, IAnimation animation)
         {
-            if (_settings.State != GameState.Play) return;
-
-            TryToSelect(state, _gameField);
+            TryToSelect(state, gameField);
 
             if (_firstSelEnemy != null && _secondSelEnemy != null) {
                 _firstSelEnemy.Selected = false;
-                SwapSelected(_animationManager, _gameField, _firstSelEnemy, _secondSelEnemy);
+                SwapSelected(animation, gameField, _firstSelEnemy, _secondSelEnemy);
                 _firstSelEnemy = _secondSelEnemy = null;
+            }
+        }
+
+        public void HandleUpdate(GameInputState state)
+        {
+            if (_settings.State == GameState.Play) {
+                SwapEnemies(state, _gameField, _animationManager);
             }
         }
     }

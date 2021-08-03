@@ -10,13 +10,20 @@ namespace Match3GameForest.Entities
 {
     public class Bonus : Sprite, IBonus
     {
+        public BonusStatus Status { get; set; }
+
+        public IEnemy Carrier { get; protected set; }
+
         public Bonus(ISpriteBatch spriteBatch, ITexture2D spriteStrip)
         : base(spriteBatch, spriteStrip)
         {
+            Status = BonusStatus.Delivered;
         }
 
-        private void AssignEvents(IList<IEnemy> enemies)
+        private IList<IBonus> AssignEvents(IList<IEnemy> enemies)
         {
+            var bonuses = new List<IBonus>();
+
             foreach (var enemy in enemies) {
                 var bonus = (Bonus)Clone();
                 enemy.AfterUpdate += bonus.Update;
@@ -24,10 +31,18 @@ namespace Match3GameForest.Entities
                 enemy.OnPosition += (value) => bonus.Position = value;
                 enemy.OnScale += (value) => bonus.Scale = value;
                 enemy.OnLightning += (value) => bonus.Lightning = value;
+                enemy.OnDestroy += () =>
+                {
+                    bonus.Status = BonusStatus.Activated;
+                };
+                bonus.Carrier = enemy;
+                bonuses.Add(bonus);
             }
+
+            return bonuses;
         }
 
-        public FieldSeries Build(FieldSeries series)
+        public IList<IBonus> Build(FieldSeries series)
         {
             var list = new List<IEnemy>();
 
@@ -43,9 +58,9 @@ namespace Match3GameForest.Entities
                 list.Add(clone);
             }
 
-            AssignEvents(list);
+            var bonuses = AssignEvents(list);
 
-            return new FieldSeries(list);
+            return bonuses;
         }
     }
 }

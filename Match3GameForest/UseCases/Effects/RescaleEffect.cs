@@ -38,6 +38,7 @@ namespace Match3GameForest.UseCases
                     _enemy.Scale += (float)_scale * milliseconds;
                 }
             }
+
             base.Update(state);
         }
     }

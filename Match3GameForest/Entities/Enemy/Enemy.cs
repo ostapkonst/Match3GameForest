@@ -63,10 +63,13 @@ namespace Match3GameForest.Entities
 
         public DateTime TouchedTime { get; private set; }
 
+        public event Action OnDestroy;
+
         public void Destroy()
         {
             IsActive = false;
             Hidden = true;
+            OnDestroy?.Invoke();
         }
     }
 }

@@ -8,5 +8,7 @@ namespace Match3GameForest.Core
         IAnimation Add(IAnimation animation);
         void Update(GameInputState state);
         void Waite(); // Останавливает вызывающий поток, поэтому вызывать из UseCase/Handlers
+
+        event Action Next;
     }
 }

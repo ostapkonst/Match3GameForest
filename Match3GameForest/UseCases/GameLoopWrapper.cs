@@ -22,8 +22,9 @@ namespace Match3GameForest.UseCases
 
             _handlers = new List<IGameLoop>() {
                 new GenerateField(contentManager),
-                new DestroyEnemies(contentManager),
                 new SwapTwoEnemies(contentManager),
+                new DestroyEnemies(contentManager),
+                new ExecuteBonuses(contentManager),
                 new UpdateTimer(contentManager),
             };
         }

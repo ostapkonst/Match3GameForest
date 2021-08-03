@@ -26,7 +26,6 @@ namespace Match3GameForest.Entities
         {
             Line = new List<IEnemy>();
             Series = new List<IList<IEnemy>>();
-            return;
         }
 
         public FieldSeries(IList<IList<IEnemy>> data)

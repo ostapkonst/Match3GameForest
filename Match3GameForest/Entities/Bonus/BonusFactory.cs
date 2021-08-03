@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,24 +13,44 @@ namespace Match3GameForest.Entities
     {
         private readonly IBonus[] _bonuses;
 
-        public float Scale = 0.5f;
+        private ConcurrentBag<IBonus> _createdBonuses;
+
+        public float Scale { get; set; } = 0.5f;
 
         public BonusFactory(IContentManager contentManager, ISpriteBatch spriteBatch)
         {
             _bonuses = new IBonus[] {
                 new Bonus(spriteBatch, contentManager.LoadTexture("BombBonus")) { Scale = Scale},
             };
+
+            _createdBonuses = new ConcurrentBag<IBonus>();
         }
 
         public FieldSeries Build(FieldSeries gameField)
         {
-            var enemiesWithBonus = new List<IEnemy>();
+            var enemies = new List<IEnemy>();
 
             foreach (var bonus in _bonuses) {
-                enemiesWithBonus.AddRange(bonus.Build(gameField).Line);
+                var tmp = bonus.Build(gameField);
+                foreach (var newBonus in tmp) {
+                    _createdBonuses.Add(newBonus);
+                    enemies.Add(newBonus.Carrier);
+                }
             }
 
-            return new FieldSeries(enemiesWithBonus);
+            return new FieldSeries(enemies);
+        }
+
+        public bool IsActivate { get => _createdBonuses.Any(x => x.Status == BonusStatus.Activated); }
+
+        public List<IBonus> GetActiveBonuses()
+        {
+            return _createdBonuses.Where(x => x.Status == BonusStatus.Activated).ToList();
+        }
+
+        public void Clear()
+        {
+            _createdBonuses.Clear();
         }
     }
 }

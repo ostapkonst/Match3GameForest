@@ -19,6 +19,7 @@ namespace Match3GameForest
         private IAnimation _animateManager;
         public GameSettings GameData { get; private set; }
         private IGameField _gameField;
+        private IBonusFactory _bonusFactory;
         private ITimer _timer;
         private IScreen _screen;
         private readonly GraphicsDeviceManager _graphics;
@@ -53,6 +54,7 @@ namespace Match3GameForest
             GameData = _container.Resolve<GameSettings>();
             _timer = _container.Resolve<ITimer>();
             _gameField = _container.Resolve<IGameField>();
+            _bonusFactory = _container.Resolve<IBonusFactory>();
             _screen = _container.Resolve<IScreen>();
 
             var cm = PrepareCM(_container);
@@ -79,6 +81,7 @@ namespace Match3GameForest
 
             cm.Set("animation", _animateManager);
             cm.Set("field", _gameField);
+            cm.Set("bonuses", _bonusFactory);
             cm.Set("settings", GameData);
             cm.Set("timer", _timer);
 

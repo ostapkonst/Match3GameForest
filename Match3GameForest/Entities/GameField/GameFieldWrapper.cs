@@ -44,6 +44,7 @@ namespace Match3GameForest.Entities
             MatrixRows = matrixRows;
             MatrixColumns = matrixColumns;
             FillMatrix();
+            _bonusManager.Clear();
             _updateSeries = false;
         }
 
@@ -137,7 +138,7 @@ namespace Match3GameForest.Entities
             return new FieldSeries(result);
         }
 
-        public FieldSeries GetSeries()
+        public FieldSeries GetMatchSeries()
         {
             if (!_updateSeries) {
                 var series = new List<IList<IEnemy>>();
@@ -207,29 +208,21 @@ namespace Match3GameForest.Entities
 
         public void Match()
         {
-            var enemies = GetSeries();
+            var enemies = GetMatchSeries();
 
             if (enemies.IsEmpty) return;
 
-            var bonus = _bonusManager.Build(enemies);
+            var bonuses = _bonusManager.Build(enemies);
 
-            // Удаляем врагов
-            OnDestroy?.Invoke(enemies.Line);
+            Status = FieldStatus.Destruction;
 
-            foreach (var enemy in enemies) {
-                enemy.Destroy();
-            }
+            DestroyEnemies(enemies);
 
-            // Добавляем бонусы
-            foreach (var enemy in bonus) {
-                SetPos(enemy, enemy.GetMatrixPos);
-            }
+            AddBonuses(bonuses);
+        }
 
-            if (!bonus.IsEmpty) {
-                OnCreate?.Invoke(bonus.Line);
-            }
-
-            // Враги падают на пустые клетки
+        private void RefreshField()
+        {
             var shifts = new List<int>();
             var moves = new List<Tuple<IEnemy, MatrixPos>>();
             for (var col = 0; col < MatrixColumns; col++) {
@@ -263,7 +256,6 @@ namespace Match3GameForest.Entities
                 SetPos(move.Item1, move.Item2);
             }
 
-            // Создаем новых врагов
             var createdEnemies = new List<IEnemy>();
             for (var col = 0; col < MatrixColumns; col++) {
                 for (var row = 0; row < shifts[col]; row++) {
@@ -273,9 +265,48 @@ namespace Match3GameForest.Entities
                 }
             }
 
-            OnCreate?.Invoke(createdEnemies);
+            if (createdEnemies.Count > 0) {
+                OnCreate?.Invoke(createdEnemies);
+            }
         }
 
-        public int Score => GetSeries().Score;
+        public void DestroyEnemies(FieldSeries enemies)
+        {
+            OnDestroy?.Invoke(enemies.Line);
+
+            foreach (var enemy in enemies) {
+                enemy.Destroy();
+            }
+        }
+
+        private void AddBonuses(FieldSeries bonus)
+        {
+            foreach (var enemy in bonus) {
+                SetPos(enemy, enemy.GetMatrixPos);
+            }
+
+            if (!bonus.IsEmpty) {
+                OnCreate?.Invoke(bonus.Line);
+            }
+        }
+
+        public FieldSeries GetField()
+        {
+            var field = new List<IList<IEnemy>>();
+
+            for (var row = 0; row < MatrixRows; row++) {
+                var line = new List<IEnemy>();
+                for (var col = 0; col < MatrixColumns; col++) {
+                    line.Add(FieldMatrix[row, col]);
+                }
+                field.Add(line);
+            }
+
+            return new FieldSeries(field);
+        }
+
+        public int Score => GetMatchSeries().Score;
+
+        public FieldStatus Status { get; set; }
     }
 }

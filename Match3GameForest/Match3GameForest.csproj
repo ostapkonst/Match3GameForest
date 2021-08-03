@@ -120,6 +120,8 @@
     <Compile Include="Entities\Enemy\MatrixPos.cs" />
     <Compile Include="Entities\GameField\FieldSeries.cs" />
     <Compile Include="Entities\Bonus\IBonus.cs" />
+    <Compile Include="UseCases\Effects\WaiteTime.cs" />
+    <Compile Include="UseCases\Handlers\ExecuteBonuses.cs" />
     <Compile Include="UseCases\Handlers\UpdateTimer.cs" />
     <Compile Include="Utils\DispatcherTaskExtensions.cs" />
     <Compile Include="UseCases\Effects\RescaleEffect.cs" />

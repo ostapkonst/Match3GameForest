@@ -15,6 +15,8 @@ namespace Match3GameForest.Core
         protected readonly ConcurrentBag<ManualResetEvent> _tokenSource;
         protected volatile bool _finished;
 
+        public event Action Next; // TODO: https://habr.com/ru/post/240385/
+
         public AnimationWrapper()
         {
             _animations = new ConcurrentBag<IAnimation>();
@@ -22,7 +24,7 @@ namespace Match3GameForest.Core
             _finished = true;
         }
 
-        public bool IsAnimate => !_finished || _animations.Any(x => x.IsAnimate);
+        public bool IsAnimate => _animations.Any(x => x.IsAnimate) || !_finished;
 
         public IAnimation Add(IAnimation animation)
         {
@@ -39,17 +41,20 @@ namespace Match3GameForest.Core
 
         public virtual void Update(GameInputState state)
         {
-            if (!IsAnimate) return;
+            if (!_finished) return;
 
             foreach (var animation in _animations) {
-                if (animation.IsAnimate)
+                if (animation.IsAnimate) {
                     animation.Update(state);
+                }
             }
 
-            if (IsAnimate) return;
+            if (!IsAnimate) {
+                Next?.Invoke();
 
-            foreach (var token in _tokenSource) {
-                token.Set();
+                foreach (var token in _tokenSource) {
+                    token.Set();
+                }
             }
         }
 
