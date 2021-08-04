@@ -10,7 +10,6 @@ namespace Match3GameForest.UseCases
     public class GenerateField : IGameLoop
     {
         private readonly GameSettings _settings;
-        private readonly IBonusFactory _bonuses;
         private readonly IAnimation _animationManager;
         private readonly IGameField _gameField;
 
@@ -19,7 +18,6 @@ namespace Match3GameForest.UseCases
             _animationManager = contentManager.Get<IAnimation>("animation");
             _gameField = contentManager.Get<IGameField>("field");
             _settings = contentManager.Get<GameSettings>("settings");
-            _bonuses = contentManager.Get<IBonusFactory>("bonuses");
 
             _gameField.OnCreate += CreateAnimation;
             _gameField.OnMove += MoveAnimation;

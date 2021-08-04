@@ -7,25 +7,37 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <Style x:Key="TextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource MetricWebRegular}" />
+            <Setter Property="FontSize" Value="17" />
+        </Style>
+
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource MetricWebRegular}" />
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="Background" Value="{x:Null}" />
+        </Style>
+    </Page.Resources>
+
     <StackPanel>
         <RelativePanel Padding="5" Height="60">
             <Button x:Name="exitButton" 
                     Content="Exit" 
-                    Background="{x:Null}" 
-                    FontSize="17"
                     RelativePanel.AlignRightWithPanel="True"
                     RelativePanel.AlignVerticalCenterWithPanel="True" 
-                    Click="exitButton_Click"/>
+                    Click="exitButton_Click"
+                    Style="{StaticResource ButtonStyle}"/>
 
             <RelativePanel RelativePanel.AlignVerticalCenterWithPanel="True" 
                            Margin="5,0,0,0">
                 <TextBlock x:Name="textScore" 
                            Text="Score" 
-                           FontSize="17"/>
+                           Style="{StaticResource TextBlockStyle}"/>
                 <TextBlock x:Name="textTimeLeft" 
                            Text="Time left" 
-                           FontSize="17"
-                           RelativePanel.Below ="textScore"/>
+                           RelativePanel.Below ="textScore"
+                           Style="{StaticResource TextBlockStyle}"/>
             </RelativePanel>
         </RelativePanel>
         <SwapChainPanel x:Name="swapChainPanel"/>

@@ -13,14 +13,12 @@ namespace Match3GameForest.UseCases
         private readonly IAnimation _animationManager;
         private readonly IGameField _gameField;
         private readonly GameSettings _settings;
-        private readonly IBonusFactory _bonuses;
 
         public DestroyEnemies(IContentManager contentManager)
         {
             _animationManager = contentManager.Get<IAnimation>("animation");
             _gameField = contentManager.Get<IGameField>("field");
             _settings = contentManager.Get<GameSettings>("settings");
-            _bonuses = contentManager.Get<IBonusFactory>("bonuses");
 
             _gameField.OnDestroy += DestroyAnimation;
         }
