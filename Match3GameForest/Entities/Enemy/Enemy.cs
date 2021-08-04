@@ -37,7 +37,7 @@ namespace Match3GameForest.Entities
 
         public MatrixPos GetMatrixPos
         {
-            get => _matrixPos; 
+            get => _matrixPos;
             set {
                 _matrixPos = value;
                 TouchedTime = DateTime.Now;
@@ -67,8 +67,9 @@ namespace Match3GameForest.Entities
 
         public void Destroy()
         {
+            if (!IsActive) return;
             IsActive = false;
-            Hidden = true;
+            Hidden = Paused = true;
             OnDestroy?.Invoke();
         }
     }

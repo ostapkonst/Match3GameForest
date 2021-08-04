@@ -13,7 +13,7 @@ namespace Match3GameForest.Entities
     {
         private readonly IBonus[] _bonuses;
 
-        private ConcurrentBag<IBonus> _createdBonuses;
+        private IList<IBonus> _createdBonuses;
 
         public float Scale { get; set; } = 0.5f;
 
@@ -23,7 +23,7 @@ namespace Match3GameForest.Entities
                 new Bonus(spriteBatch, contentManager.LoadTexture("BombBonus")) { Scale = Scale},
             };
 
-            _createdBonuses = new ConcurrentBag<IBonus>();
+            _createdBonuses = new List<IBonus>();
         }
 
         public FieldSeries Build(FieldSeries gameField)
@@ -41,11 +41,11 @@ namespace Match3GameForest.Entities
             return new FieldSeries(enemies);
         }
 
-        public bool IsActivate { get => _createdBonuses.Any(x => x.Status == BonusStatus.Activated); }
+        public bool IsActivate { get => _createdBonuses.Any(x => x.IsActivate); }
 
         public List<IBonus> GetActiveBonuses()
         {
-            return _createdBonuses.Where(x => x.Status == BonusStatus.Activated).ToList();
+            return _createdBonuses.Where(x => x.IsActivate).ToList();
         }
 
         public void Clear()

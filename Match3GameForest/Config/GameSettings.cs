@@ -10,7 +10,7 @@
 
     public class GameSettings
     {
-        public volatile GameState State = GameState.Finish;
+        public GameState State = GameState.Finish;
 
         public int PlayingDuration { get; set; } = 60;
         public int MatrixColumns { get; set; } = 8;

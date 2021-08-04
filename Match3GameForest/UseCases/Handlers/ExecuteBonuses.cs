@@ -35,15 +35,13 @@ namespace Match3GameForest.UseCases
             return wrap;
         }
 
-        private void BombAnimation(IBonus bonus, IAnimation animation, IGameField gameField)
+        private void BombAnimation(IBonus bonus)
         {
             var act1 = new WaiteTime(250); // Задержка по ТЗ
 
             act1.Next += () =>
             {
-                bonus.Status = BonusStatus.Finished;
-
-                var field = gameField.GetField();
+                var field = _gameField.GetField();
                 var enemies = new List<IEnemy>();
 
                 var carrirer = bonus.Carrier;
@@ -53,11 +51,14 @@ namespace Match3GameForest.UseCases
 
                 for (var row = Row - 1; row <= Row + 1; row++) {
                     for (var col = Col - 1; col <= Col + 1; col++) {
-                        if (row == Row && col == Col) continue; // Текущий елемент уже уничтожен
-                        if (row < 0 || row >= gameField.MatrixRows) continue;
-                        if (col < 0 || col >= gameField.MatrixColumns) continue;
+                        if (row < 0 || row >= _gameField.MatrixRows) continue;
+                        if (col < 0 || col >= _gameField.MatrixColumns) continue;
 
-                        enemies.Add(field.Series[row][col]);
+                        var enemy = field.Series[row][col];
+
+                        if (!enemy.IsActive) continue;
+
+                        enemies.Add(enemy);
                     }
                 }
 
@@ -65,30 +66,29 @@ namespace Match3GameForest.UseCases
                 {
                     foreach (var enemy in enemies) {
                         enemy.Destroy();
+                        _settings.GameScore += enemy.Prize;
                     }
-
-                    bonus.Status = BonusStatus.Finished;
                 };
             };
 
-            bonus.Status = BonusStatus.Worked;
-            animation.Add(act1);
+            _animationManager.Add(act1);
         }
 
-        private void ActivateAll(IBonusFactory bonusFactory, IGameField gameField)
+        private void ActivateAll()
         {
-            if (!bonusFactory.IsActivate) return;
+            if (!_bonuses.IsActivate) return;
 
-            var allActiveBonuses = bonusFactory.GetActiveBonuses();
+            var allActiveBonuses = _bonuses.GetActiveBonuses();
             foreach (var bonus in allActiveBonuses) {
-                BombAnimation(bonus, _animationManager, gameField);
+                BombAnimation(bonus);
+                bonus.IsActivate = false;
             }
         }
 
         public void HandleUpdate(GameInputState state)
         {
             if (_settings.State == GameState.Play) {
-                ActivateAll(_bonuses, _gameField);
+                ActivateAll();
             }
         }
     }

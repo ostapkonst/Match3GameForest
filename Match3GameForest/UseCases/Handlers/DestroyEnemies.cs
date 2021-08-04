@@ -13,12 +13,14 @@ namespace Match3GameForest.UseCases
         private readonly IAnimation _animationManager;
         private readonly IGameField _gameField;
         private readonly GameSettings _settings;
+        private readonly IBonusFactory _bonuses;
 
         public DestroyEnemies(IContentManager contentManager)
         {
             _animationManager = contentManager.Get<IAnimation>("animation");
             _gameField = contentManager.Get<IGameField>("field");
             _settings = contentManager.Get<GameSettings>("settings");
+            _bonuses = contentManager.Get<IBonusFactory>("bonuses");
 
             _gameField.OnDestroy += DestroyAnimation;
         }
@@ -33,21 +35,22 @@ namespace Match3GameForest.UseCases
             wrap.Waite();
         }
 
-        private void DestroyAll(GameSettings settings, IGameField gameField)
+        private void DestroyAll()
         {
-            var score = gameField.Score;
+            var score = _gameField.Score;
 
             if (score == 0) return;
 
-            gameField.Match();
+            _gameField.Match();
 
-            settings.GameScore += score;
+            _settings.GameScore += score;
         }
 
         public void HandleUpdate(GameInputState state)
         {
             if (_settings.State == GameState.Play) {
-                DestroyAll(_settings, _gameField);
+                if (_animationManager.IsAnimate) return;
+                DestroyAll();
             }
         }
     }

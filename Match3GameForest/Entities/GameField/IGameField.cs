@@ -7,12 +7,6 @@ using Microsoft.Xna.Framework;
 
 namespace Match3GameForest.Entities
 {
-    public enum FieldStatus
-    {
-        Destruction,
-        Stable
-    }
-
     public interface IGameField : IGameObject
     {
         void GenerateField(int matrixRows, int matrixColumns);
@@ -20,7 +14,7 @@ namespace Match3GameForest.Entities
         int MatrixRows { get; }
         int MatrixColumns { get; }
 
-        FieldStatus Status { get; set; }
+        void RefreshField();
 
         IEnemy GetEnemyByVector(Vector2 position);
         bool IsNear(IEnemy first, IEnemy second);

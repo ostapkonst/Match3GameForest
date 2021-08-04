@@ -39,7 +39,7 @@ namespace Match3GameForest.UseCases
             }
         }
 
-        private void SwapAnimation(IAnimation animation, IEnemy enemy1, IEnemy enemy2)
+        private void SwapAnimation(IEnemy enemy1, IEnemy enemy2)
         {
             var wrap = new AnimationWrapper();
 
@@ -47,30 +47,30 @@ namespace Match3GameForest.UseCases
             var act2 = new MoveToEffect(enemy2, enemy1.Position, 400);
 
             wrap.Add(act1).Add(act2);
-            animation.Add(wrap);
+            _animationManager.Add(wrap);
             wrap.Waite();
         }
 
-        private void SwapSelected(IAnimation animation, IGameField gameField, IEnemy enemy1, IEnemy enemy2)
+        private void SwapSelected(IEnemy enemy1, IEnemy enemy2)
         {
-            if (!gameField.IsNear(enemy1, enemy2)) return;
+            if (!_gameField.IsNear(enemy1, enemy2)) return;
 
-            SwapAnimation(animation, enemy1, enemy2);
-            gameField.SwapEnemies(enemy1, enemy2);
+            SwapAnimation(enemy1, enemy2);
+            _gameField.SwapEnemies(enemy1, enemy2);
 
-            if (gameField.Score == 0) {
-                SwapAnimation(animation, enemy1, enemy2);
-                gameField.SwapEnemies(enemy2, enemy1);
+            if (_gameField.Score == 0) {
+                SwapAnimation(enemy1, enemy2);
+                _gameField.SwapEnemies(enemy2, enemy1);
             }
         }
 
-        void SwapEnemies(GameInputState state, IGameField gameField, IAnimation animation)
+        void SwapEnemies(GameInputState state)
         {
-            TryToSelect(state, gameField);
+            TryToSelect(state, _gameField);
 
             if (_firstSelEnemy != null && _secondSelEnemy != null) {
                 _firstSelEnemy.Selected = false;
-                SwapSelected(animation, gameField, _firstSelEnemy, _secondSelEnemy);
+                SwapSelected(_firstSelEnemy, _secondSelEnemy);
                 _firstSelEnemy = _secondSelEnemy = null;
             }
         }
@@ -78,7 +78,7 @@ namespace Match3GameForest.UseCases
         public void HandleUpdate(GameInputState state)
         {
             if (_settings.State == GameState.Play) {
-                SwapEnemies(state, _gameField, _animationManager);
+                SwapEnemies(state);
             }
         }
     }

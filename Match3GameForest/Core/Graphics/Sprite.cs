@@ -106,8 +106,7 @@ namespace Match3GameForest.Core
         public event Action<GameTime> BeforeDraw;
         public event Action<GameTime> AfterDraw;
         public event Action<float> OnScale;
-        public event Action<Vector2> OnPosition
-            ;
+        public event Action<Vector2> OnPosition;
         public event Action<Color> OnLightning;
     }
 }

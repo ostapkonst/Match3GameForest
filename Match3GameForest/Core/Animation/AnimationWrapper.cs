@@ -12,7 +12,7 @@ namespace Match3GameForest.Core
     public class AnimationWrapper : IAnimation, IRegistering
     {
         protected readonly ConcurrentBag<IAnimation> _animations;
-        protected readonly ConcurrentBag<ManualResetEvent> _tokenSource;
+        protected readonly ConcurrentBag<AutoResetEvent> _tokenSource;
         protected volatile bool _finished;
 
         public event Action Next; // TODO: https://habr.com/ru/post/240385/
@@ -20,7 +20,7 @@ namespace Match3GameForest.Core
         public AnimationWrapper()
         {
             _animations = new ConcurrentBag<IAnimation>();
-            _tokenSource = new ConcurrentBag<ManualResetEvent>();
+            _tokenSource = new ConcurrentBag<AutoResetEvent>();
             _finished = true;
         }
 
@@ -34,7 +34,7 @@ namespace Match3GameForest.Core
 
         public void Waite()
         {
-            var mre = new ManualResetEvent(false);
+            var mre = new AutoResetEvent(false);
             _tokenSource.Add(mre);
             mre.WaitOne();
         }
@@ -51,18 +51,20 @@ namespace Match3GameForest.Core
 
             if (!IsAnimate) {
                 Next?.Invoke();
+                FreeTokens();
+            }
+        }
 
-                foreach (var token in _tokenSource) {
-                    token.Set();
-                }
+        private void FreeTokens()
+        {
+            foreach (var token in _tokenSource) {
+                token.Set();
             }
         }
 
         public void Dispose()
         {
-            foreach (var animation in _animations) {
-                animation.Dispose();
-            }
+            FreeTokens();
             _tokenSource.Clear();
             _animations.Clear();
         }

@@ -10,44 +10,42 @@ namespace Match3GameForest.Entities
 {
     public class Bonus : Sprite, IBonus
     {
-        public BonusStatus Status { get; set; }
-
         public IEnemy Carrier { get; protected set; }
+
+        public IList<MatrixPos> Series { get; protected set; }
+        public bool IsActivate { get; set; }
 
         public Bonus(ISpriteBatch spriteBatch, ITexture2D spriteStrip)
         : base(spriteBatch, spriteStrip)
         {
-            Status = BonusStatus.Delivered;
         }
 
-        private IList<IBonus> AssignEvents(IList<IEnemy> enemies)
+        private IBonus AssignEvents(IEnemy enemy)
         {
-            var bonuses = new List<IBonus>();
+            var bonus = (Bonus)Clone();
 
-            foreach (var enemy in enemies) {
-                var bonus = (Bonus)Clone();
-                enemy.AfterUpdate += bonus.Update;
-                enemy.AfterDraw += bonus.Draw;
-                enemy.OnPosition += (value) => bonus.Position = value;
-                enemy.OnScale += (value) => bonus.Scale = value;
-                enemy.OnLightning += (value) => bonus.Lightning = value;
-                enemy.OnDestroy += () =>
-                {
-                    bonus.Status = BonusStatus.Activated;
-                };
-                bonus.Carrier = enemy;
-                bonuses.Add(bonus);
-            }
+            enemy.AfterUpdate += bonus.Update;
+            enemy.AfterDraw += bonus.Draw;
+            enemy.OnPosition += (value) => bonus.Position = value;
+            enemy.OnScale += (value) => bonus.Scale = value;
+            enemy.OnLightning += (value) => bonus.Lightning = value;
+            enemy.OnDestroy += () =>
+            {
+                bonus.IsActivate = true;
+            };
 
-            return bonuses;
+            bonus.Carrier = enemy;
+            bonus.IsActivate = false;
+
+            return bonus;
         }
 
         public IList<IBonus> Build(FieldSeries series)
         {
-            var list = new List<IEnemy>();
+            var bonuses = new List<IBonus>();
 
             foreach (var el in series.Series) {
-                if (el.Count != 4) continue;
+                if (el.Count < 4) continue;
                 var maxTimeEnemy = el[0];
                 foreach (var enemy in el) {
                     if (enemy.TouchedTime > maxTimeEnemy.TouchedTime) {
@@ -55,10 +53,8 @@ namespace Match3GameForest.Entities
                     }
                 }
                 var clone = (IEnemy)maxTimeEnemy.Clone();
-                list.Add(clone);
+                bonuses.Add(AssignEvents(clone));
             }
-
-            var bonuses = AssignEvents(list);
 
             return bonuses;
         }

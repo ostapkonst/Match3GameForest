@@ -214,14 +214,12 @@ namespace Match3GameForest.Entities
 
             var bonuses = _bonusManager.Build(enemies);
 
-            Status = FieldStatus.Destruction;
-
             DestroyEnemies(enemies);
 
             AddBonuses(bonuses);
         }
 
-        private void RefreshField()
+        public void RefreshField()
         {
             var shifts = new List<int>();
             var moves = new List<Tuple<IEnemy, MatrixPos>>();
@@ -306,7 +304,5 @@ namespace Match3GameForest.Entities
         }
 
         public int Score => GetMatchSeries().Score;
-
-        public FieldStatus Status { get; set; }
     }
 }
