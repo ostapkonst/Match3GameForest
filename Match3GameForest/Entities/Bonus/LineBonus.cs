@@ -56,9 +56,7 @@ namespace Match3GameForest.Entities
                     }
 
                     if (hash.Contains(enemy)) { // является пересечением
-                        if (_random.NextBool()) {
-                            Rotation = 0.5f;
-                        }
+                        Rotation = _random.NextBool() ? 0f : 0.5f;
                         bonuses.Add(AssignEvents(enemy));
                     }
                     hash.Add(enemy);

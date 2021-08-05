@@ -8,7 +8,7 @@ namespace Match3GameForest
 
         public static bool NextBool(this Random r, int truePercentage = 50)
         {
-            return r.NextDouble() < truePercentage / 100.0;
+            return r.NextDouble() < truePercentage / 100f;
         }
 
         public static T NextEnum<T>(this Random r)
