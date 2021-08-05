@@ -24,14 +24,7 @@ namespace Match3GameForest.Core
             set => _soundInstance.IsLooped = value;
         }
 
-        public void Play()
-        {
-            _soundInstance.Play();
-        }
-
-        public void Stop()
-        {
-            _soundInstance.Stop();
-        }
+        public void Play() => _soundInstance.Play();
+        public void Stop() => _soundInstance.Stop();
     }
 }

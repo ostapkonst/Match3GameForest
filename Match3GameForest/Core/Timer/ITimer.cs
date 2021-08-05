@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace Match3GameForest.Entities
+namespace Match3GameForest.Core
 {
     public interface ITimer
     {

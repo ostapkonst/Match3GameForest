@@ -28,7 +28,7 @@ namespace Match3GameForest
             this.InitializeComponent();
 
             // https://github.com/MonoGame/MonoGame/issues/6089
-            this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Required;
+            this.NavigationCacheMode = NavigationCacheMode.Required;
 
             // Create the game.
             var launchArguments = string.Empty;

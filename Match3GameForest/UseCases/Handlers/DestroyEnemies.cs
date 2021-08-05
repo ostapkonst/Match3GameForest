@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using Match3GameForest.Config;
 using Match3GameForest.Core;
 using Match3GameForest.Entities;
-using Microsoft.Xna.Framework;
 
 namespace Match3GameForest.UseCases
 {

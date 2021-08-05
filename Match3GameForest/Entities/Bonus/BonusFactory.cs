@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Match3GameForest.Config;
 using Match3GameForest.Core;
 
@@ -19,8 +15,15 @@ namespace Match3GameForest.Entities
 
         public BonusFactory(IContentManager contentManager, ISpriteBatch spriteBatch)
         {
+            ITexture2D texture1 = contentManager.LoadTexture("BombBonus"),
+                texture2 = contentManager.LoadTexture("LineBonus"),
+                texture3 = contentManager.LoadTexture("Destroyer");
+
             _bonuses = new IBonus[] {
-                new Bonus(spriteBatch, contentManager.LoadTexture("BombBonus")) { Scale = Scale},
+                new BombBonus(spriteBatch, texture1) { Scale = Scale},
+                new LineBonus(spriteBatch, texture2, texture3) {
+                    Scale = Scale, DestroyerScale = Scale
+                }
             };
 
             _createdBonuses = new List<IBonus>();
@@ -41,11 +44,11 @@ namespace Match3GameForest.Entities
             return new FieldSeries(enemies);
         }
 
-        public bool IsActivate { get => _createdBonuses.Any(x => x.IsActivate); }
+        public bool IsActivate { get => _createdBonuses.Any(x => x.IsActive); }
 
         public List<IBonus> GetActiveBonuses()
         {
-            return _createdBonuses.Where(x => x.IsActivate).ToList();
+            return _createdBonuses.Where(x => x.IsActive).ToList();
         }
 
         public void Clear()

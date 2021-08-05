@@ -25,11 +25,11 @@ namespace Match3GameForest
 
     public sealed partial class MainMenu : Page
     {
-        private int minRange = 6;
-        private int maxRange = 12;
-        private int defaultValue = 8;
+        private readonly int minRange = 6;
+        private readonly int maxRange = 12;
+        private readonly int defaultValue = 8;
 
-        private IList<int> MatrixRange;
+        private readonly IList<int> MatrixRange;
 
         public MainMenu()
         {
@@ -49,7 +49,7 @@ namespace Match3GameForest
             var pi = new GameSettings() {
                 MatrixRows = (int)rowsList.SelectedValue,
                 MatrixColumns = (int)colsList.SelectedValue,
-                PlayingDuration = ((int)timeList.SelectedIndex + 1) * 30,
+                PlayingDuration = (timeList.SelectedIndex + 1) * 30,
                 PlaySound = soundControl.IsOn
             };
 

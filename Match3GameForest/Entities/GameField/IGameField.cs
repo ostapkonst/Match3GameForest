@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Match3GameForest.Core;
 using Microsoft.Xna.Framework;
 
 namespace Match3GameForest.Entities
 {
-    public interface IGameField : IGameObject
+    public interface IGameField : ICollided
     {
         void GenerateField(int matrixRows, int matrixColumns);
 

@@ -110,17 +110,22 @@
     <Compile Include="Core\Graphics\IScreen.cs" />
     <Compile Include="Core\Graphics\ScreenWrapper.cs" />
     <Compile Include="Core\IContentManager.cs" />
+    <Compile Include="Core\Physics\ICollided.cs" />
     <Compile Include="Core\Sound\SoundEffectWrapper.cs" />
     <Compile Include="Core\Sound\ISoundEffect.cs" />
-    <Compile Include="Core\ITimer.cs" />
-    <Compile Include="Core\Timer.cs" />
+    <Compile Include="Core\Timer\ITimer.cs" />
+    <Compile Include="Core\Timer\Timer.cs" />
+    <Compile Include="Entities\Bonus\BombBonus.cs" />
     <Compile Include="Entities\Bonus\Bonus.cs" />
     <Compile Include="Entities\Bonus\BonusFactory.cs" />
+    <Compile Include="Entities\Bonus\Destroyer.cs" />
+    <Compile Include="Entities\Bonus\LineBonus.cs" />
     <Compile Include="Entities\Bonus\IBonusFactory.cs" />
     <Compile Include="Entities\Enemy\MatrixPos.cs" />
     <Compile Include="Entities\GameField\FieldSeries.cs" />
     <Compile Include="Entities\Bonus\IBonus.cs" />
-    <Compile Include="UseCases\Effects\WaiteTime.cs" />
+    <Compile Include="UseCases\Effects\MoveDirectionEffect.cs" />
+    <Compile Include="UseCases\Effects\WaiteEffect.cs" />
     <Compile Include="UseCases\Handlers\ExecuteBonuses.cs" />
     <Compile Include="UseCases\Handlers\UpdateTimer.cs" />
     <Compile Include="Utils\DispatcherTaskExtensions.cs" />
@@ -154,6 +159,7 @@
     <Compile Include="Entities\Enemy\IEnemyFactory.cs" />
     <Compile Include="UseCases\Handlers\SwapTwoEnemies.cs" />
     <Compile Include="UseCases\Effects\MoveToEffect.cs" />
+    <Compile Include="Utils\RandomExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -171,7 +177,9 @@
     <Content Include="Content\BackgroundSound.mp3" />
     <Content Include="Content\BlueDrop.png" />
     <Content Include="Content\BombBonus.png" />
+    <Content Include="Content\Destroyer.png" />
     <Content Include="Content\GreenLeaf.png" />
+    <Content Include="Content\LineBonus.png" />
     <Content Include="Content\OrangeSun.png" />
     <Content Include="Content\RedHeart.png" />
     <Content Include="Content\YellowStar.png" />

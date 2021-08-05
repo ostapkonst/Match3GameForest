@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Match3GameForest.Config;
 
 namespace Match3GameForest.Core
@@ -15,7 +12,8 @@ namespace Match3GameForest.Core
         protected readonly ConcurrentBag<AutoResetEvent> _tokenSource;
         protected volatile bool _finished;
 
-        public event Action Next; // TODO: https://habr.com/ru/post/240385/
+        public event Action Next;     // TODO: применить https://habr.com/ru/post/240385/
+        public event Action Parallel; // к событиям
 
         public AnimationWrapper()
         {
@@ -41,6 +39,8 @@ namespace Match3GameForest.Core
 
         public virtual void Update(GameInputState state)
         {
+            Parallel?.Invoke();
+
             if (!_finished) return;
 
             foreach (var animation in _animations) {
@@ -60,12 +60,12 @@ namespace Match3GameForest.Core
             foreach (var token in _tokenSource) {
                 token.Set();
             }
+            _tokenSource.Clear();
         }
 
         public void Dispose()
         {
             FreeTokens();
-            _tokenSource.Clear();
             _animations.Clear();
         }
     }

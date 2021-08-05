@@ -6,7 +6,8 @@ namespace Match3GameForest.Entities
     public interface IBonus : ISprite
     {
         IList<IBonus> Build(FieldSeries series);
-        bool IsActivate { get; set; }
+        bool IsActive { get; }
         IEnemy Carrier { get; }
+        void Deactivate();
     }
 }

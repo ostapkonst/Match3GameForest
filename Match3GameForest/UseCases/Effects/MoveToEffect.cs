@@ -5,20 +5,20 @@ namespace Match3GameForest.UseCases
 {
     public class MoveToEffect : AnimationWrapper
     {
-        private readonly ISprite _enemy;
         private readonly Vector2 _direction;
         private int _elapsedTime;
 
+        public IGameObject Enemy { get; private set; }
         public Vector2 Destination { get; private set; }
         public int FrameTime { get; private set; }
 
-        public MoveToEffect(ISprite sprite, Vector2 destination, int frameTime) : base()
+        public MoveToEffect(IGameObject sprite, Vector2 destination, int frameTime) : base()
         {
             Destination = destination;
             FrameTime = frameTime;
-            _enemy = sprite;
+            Enemy = sprite;
             _elapsedTime = 0;
-            _direction = (Destination - _enemy.Position) / FrameTime;
+            _direction = (Destination - Enemy.Position) / FrameTime;
             _finished = false;
         }
 
@@ -29,10 +29,10 @@ namespace Match3GameForest.UseCases
 
                 _elapsedTime += milliseconds;
                 if (_elapsedTime >= FrameTime) {
-                    _enemy.Position = Destination;
+                    Enemy.Position = Destination;
                     _finished = true;
                 } else {
-                    _enemy.Position += _direction * milliseconds;
+                    Enemy.Position += _direction * milliseconds;
                 }
             }
 

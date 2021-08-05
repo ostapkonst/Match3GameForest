@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Match3GameForest.Config;
 using Match3GameForest.Core;
 using Match3GameForest.Entities;
@@ -25,26 +21,16 @@ namespace Match3GameForest.UseCases
             _bonuses = contentManager.Get<IBonusFactory>("bonuses");
         }
 
-        private IAnimation DestroyAnimation(IList<IEnemy> series)
+        private void BombAnimation(BombBonus bomb)
         {
-            var wrap = new AnimationWrapper();
-            foreach (var el in series) {
-                wrap.Add(new RescaleEffect(el, 1f, 0.6f, 450));
-            }
-            _animationManager.Add(wrap);
-            return wrap;
-        }
-
-        private void BombAnimation(IBonus bonus)
-        {
-            var act1 = new WaiteTime(250); // Задержка по ТЗ
+            var act1 = new WaiteEffect(250); // Задержка по ТЗ
 
             act1.Next += () =>
             {
                 var field = _gameField.GetField();
                 var enemies = new List<IEnemy>();
 
-                var carrirer = bonus.Carrier;
+                var carrirer = bomb.Carrier;
                 var carrierPos = carrirer.GetMatrixPos;
                 var Col = carrierPos.X;
                 var Row = carrierPos.Y;
@@ -58,20 +44,52 @@ namespace Match3GameForest.UseCases
 
                         if (!enemy.IsActive) continue;
 
-                        enemies.Add(enemy);
-                    }
-                }
-
-                DestroyAnimation(enemies).Next += () =>
-                {
-                    foreach (var enemy in enemies) {
-                        enemy.Destroy();
+                        enemy.Destroy(); // Добавить анимацию?
                         _settings.GameScore += enemy.Prize;
                     }
-                };
+                }
             };
 
             _animationManager.Add(act1);
+        }
+
+        private void RocketFlyAnimation(Destroyer d1, IAnimation wrap)
+        {
+            var act1 = new MoveDirectionEffect(d1, 450, _gameField);
+
+            act1.Next += () =>
+            {
+                d1.Destroy();
+            };
+
+            act1.Parallel += () =>
+            {
+                var field = _gameField.GetField();
+
+                // TODO: Оптимизировать проверку столкновений
+                foreach (var enemy in field) {
+                    if (!enemy.IsActive) continue;
+                    if (!enemy.Collide(d1)) continue;
+
+                    enemy.Destroy(); // Добавить анимацию?
+                    _settings.GameScore += enemy.Prize;
+                }
+            };
+
+            wrap.Add(act1);
+        }
+
+        private void LineAnimation(LineBonus line)
+        {
+            var d1 = line.GetDestroyer();
+            var d2 = line.GetDestroyer(false);
+
+            var wrap = new AnimationWrapper();
+
+            RocketFlyAnimation(d1, wrap);
+            RocketFlyAnimation(d2, wrap);
+
+            _animationManager.Add(wrap);
         }
 
         private void ActivateAll()
@@ -80,8 +98,17 @@ namespace Match3GameForest.UseCases
 
             var allActiveBonuses = _bonuses.GetActiveBonuses();
             foreach (var bonus in allActiveBonuses) {
-                BombAnimation(bonus);
-                bonus.IsActivate = false;
+                switch (bonus) { // TODO: Вынести в методы классов
+                    case BombBonus bomb:
+                        BombAnimation(bomb);
+                        break;
+                    case LineBonus line:
+                        LineAnimation(line);
+                        break;
+                    default:
+                        throw new NotImplementedException("Bonus handler not implemented");
+                }
+                bonus.Deactivate();
             }
         }
 

@@ -10,5 +10,6 @@ namespace Match3GameForest.Core
         void Waite(); // Останавливает вызывающий поток, поэтому вызывать из UseCase/Handlers
 
         event Action Next;
+        event Action Parallel;
     }
 }

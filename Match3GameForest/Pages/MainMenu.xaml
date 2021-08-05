@@ -9,7 +9,9 @@
 
     <RelativePanel>
         <StackPanel RelativePanel.AlignRightWithPanel="True" Padding="10">
-            <ToggleSwitch Name="soundControl" OffContent="Quiet mode " OnContent="Play music"/>
+            <ToggleSwitch Name="soundControl"
+                          OffContent="Quiet mode"
+                          OnContent="Play music"/>
         </StackPanel>
 
         <StackPanel Background="DarkGray" Padding="20" Width="300" 
@@ -57,7 +59,10 @@
                     Margin="0,20,0,0">
                 <StackPanel>
                     <Image Source="/Assets/PlayButton.png" Height="100"/>
-                    <TextBlock Text="Play" FontSize="20" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Play" 
+                               FontSize="20" 
+                               FontWeight="Bold" 
+                               HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
         </StackPanel>

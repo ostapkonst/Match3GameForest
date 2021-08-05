@@ -4,23 +4,22 @@ namespace Match3GameForest.UseCases
 {
     public class RescaleEffect : AnimationWrapper
     {
-        private readonly ISprite _enemy;
         private int _elapsedTime;
-        private readonly double _scale;
+        private readonly float _scale;
 
-        public float FromScale { get; set; }
-        public float ToScale { get; set; }
-
-        public int FrameTime { get; set; }
+        public ISprite Enemy { get; private set; }
+        public float FromScale { get; private set; }
+        public float ToScale { get; private set; }
+        public int FrameTime { get; private set; }
 
         public RescaleEffect(ISprite sprite, float fromScale, float toScale, int frameTime) : base()
         {
             FrameTime = frameTime;
             FromScale = fromScale;
-            _enemy = sprite;
-            ToScale = toScale * _enemy.Scale;
-            _enemy.Scale *= FromScale;
-            _scale = (ToScale - _enemy.Scale) / FrameTime;
+            Enemy = sprite;
+            ToScale = toScale * Enemy.Scale;
+            Enemy.Scale *= FromScale;
+            _scale = (ToScale - Enemy.Scale) / FrameTime;
             _elapsedTime = 0;
             _finished = false;
         }
@@ -32,10 +31,10 @@ namespace Match3GameForest.UseCases
 
                 _elapsedTime += milliseconds;
                 if (_elapsedTime >= FrameTime) {
-                    _enemy.Scale = ToScale;
+                    Enemy.Scale = ToScale;
                     _finished = true;
                 } else {
-                    _enemy.Scale += (float)_scale * milliseconds;
+                    Enemy.Scale += _scale * milliseconds;
                 }
             }
 

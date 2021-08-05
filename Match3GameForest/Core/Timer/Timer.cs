@@ -2,7 +2,7 @@
 using Match3GameForest.Config;
 using Microsoft.Xna.Framework;
 
-namespace Match3GameForest.Entities
+namespace Match3GameForest.Core
 {
     public class Timer : ITimer, IRegistering
     {
@@ -33,7 +33,7 @@ namespace Match3GameForest.Entities
                 OnStart?.Invoke();
             }
 
-            _elapsedTime += gameTime.ElapsedGameTime.Milliseconds;
+            _elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             if (!IsActive) {
                 OnFinish?.Invoke();

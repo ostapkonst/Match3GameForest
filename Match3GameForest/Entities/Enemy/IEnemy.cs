@@ -1,14 +1,13 @@
 ﻿using System;
 using Match3GameForest.Core;
-using Microsoft.Xna.Framework;
 
 namespace Match3GameForest.Entities
 {
-    public interface IEnemy : ISprite
+    public interface IEnemy : ISprite, ICollided, ICloneable
     {
         int Prize { get; }
         void Destroy();
-        Rectangle GetBounds();
+        
         bool IsActive { get; }
         bool Selected { get; set; }
         string Type { get; }

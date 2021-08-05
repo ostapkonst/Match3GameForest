@@ -43,6 +43,18 @@
 /processorParam:TextureFormat=Color
 /build:BombBonus.png
 
+#begin Destroyer.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Destroyer.png
+
 #begin GreenLeaf.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -54,6 +66,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:GreenLeaf.png
+
+#begin LineBonus.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:LineBonus.png
 
 #begin OrangeSun.png
 /importer:TextureImporter

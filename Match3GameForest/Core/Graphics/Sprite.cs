@@ -27,18 +27,15 @@ namespace Match3GameForest.Core
             Scale = 1f;
             Lightning = Color.White;
             _spriteBatch = spriteBatch;
-            Paused = false;
             Hidden = false;
+            Rotation = 0;
             Position = Vector2.Zero;
         }
 
-        public bool Paused { get; set; }
         public bool Hidden { get; set; }
 
         public virtual void Update(GameInputState state)
         {
-            if (Paused) return;
-
             BeforeUpdate?.Invoke(state);
 
             _sourceRect = new Rectangle(0, 0, FrameWidth, FrameHeight);
@@ -48,17 +45,19 @@ namespace Match3GameForest.Core
 
         public virtual void Draw(GameTime gameTime)
         {
-            if (Hidden) return;
-
             BeforeDraw?.Invoke(gameTime);
 
-            var destRect = new Rectangle(
-                (int)Position.X - ScaledWidth / 2,
-                (int)Position.Y - ScaledHeight / 2,
-                ScaledWidth,
-                ScaledHeight);
+            if (!Hidden) {
+                var destRect = new Vector2(
+                    (int)Position.X,
+                    (int)Position.Y);
 
-            _spriteBatch.Draw(_spriteStrip, destRect, _sourceRect, Lightning);
+                var origin = new Vector2(
+                    FrameWidth / 2,
+                    FrameHeight / 2);
+
+                _spriteBatch.Draw(_spriteStrip, destRect, _sourceRect, Lightning, Rotation, origin, Scale);
+            }
 
             AfterDraw?.Invoke(gameTime);
         }
@@ -76,6 +75,7 @@ namespace Match3GameForest.Core
 
         private float _scale;
         private Color _lightning;
+        private float _rotation;
 
         public float Scale
         {
@@ -90,9 +90,18 @@ namespace Match3GameForest.Core
 
         public int ScaledHeight => (int)(FrameHeight * Scale);
 
-        private int FrameWidth => _spriteStrip.Width;
+        public int FrameWidth => _spriteStrip.Width;
 
-        private int FrameHeight => _spriteStrip.Height;
+        public int FrameHeight => _spriteStrip.Height;
+
+        public float Rotation
+        {
+            get => _rotation;
+            set {
+                _rotation = value;
+                OnRotation?.Invoke(_rotation);
+            }
+        }
 
         public object Clone()
         {
@@ -105,8 +114,10 @@ namespace Match3GameForest.Core
         public event Action<GameInputState> AfterUpdate;
         public event Action<GameTime> BeforeDraw;
         public event Action<GameTime> AfterDraw;
+
         public event Action<float> OnScale;
         public event Action<Vector2> OnPosition;
         public event Action<Color> OnLightning;
+        public event Action<float> OnRotation;
     }
 }

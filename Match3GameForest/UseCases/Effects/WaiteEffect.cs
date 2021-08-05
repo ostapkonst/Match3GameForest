@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Match3GameForest.Core;
-using Microsoft.Xna.Framework;
+﻿using Match3GameForest.Core;
 
 namespace Match3GameForest.UseCases
 {
-    public class WaiteTime : AnimationWrapper
+    public class WaiteEffect : AnimationWrapper
     {
         private int _elapsedTime;
 
         public int FrameTime { get; private set; }
 
-        public WaiteTime(int frameTime) : base()
+        public WaiteEffect(int frameTime) : base()
         {
             FrameTime = frameTime;
             _elapsedTime = 0;

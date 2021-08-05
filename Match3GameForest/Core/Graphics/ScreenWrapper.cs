@@ -22,7 +22,7 @@ namespace Match3GameForest.Core
         public Vector2 WorldToLocalScale(bool saveProportion)
         {
             var L2W = LocalToWorldScale(saveProportion);
-            var W2L = new Vector2(1) / L2W;
+            var W2L = Vector2.One / L2W;
 
             return W2L;
         }

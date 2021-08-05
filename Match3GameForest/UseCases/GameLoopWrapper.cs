@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Match3GameForest.Core;
-using Microsoft.Xna.Framework;
 
 namespace Match3GameForest.UseCases
 {
     // Все Handlers обрабатываются в одном таске
-    // Это нужно для работы Animation.Waite в events
+    // Это нужно для работы Animation.Waite в событиях
 
     public class GameLoopWrapper : IDisposable
     {
-        private IList<IGameLoop> _handlers;
+        private readonly IList<IGameLoop> _handlers;
         private Task _currentTask;
 
         public GameLoopWrapper(IContentManager contentManager)

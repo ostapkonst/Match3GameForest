@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework.Audio;
-
-namespace Match3GameForest.Core
+﻿namespace Match3GameForest.Core
 {
     public interface ISoundEffect
     {

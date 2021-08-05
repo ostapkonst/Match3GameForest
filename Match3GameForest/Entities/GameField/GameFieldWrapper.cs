@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Match3GameForest.Config;
 using Match3GameForest.Core;
@@ -10,7 +9,7 @@ namespace Match3GameForest.Entities
 {
     public class GameFieldWrapper : IGameField, IRegistering
     {
-        public IEnemy[,] FieldMatrix { get; private set; }
+        private IEnemy[,] FieldMatrix;
 
         private readonly IEnemyFactory _enemyFactory;
         private readonly IBonusFactory _bonusManager;
@@ -23,6 +22,9 @@ namespace Match3GameForest.Entities
         public int ScaledWidth => MatrixColumns * _blankEnemy.ScaledWidth;
         public int ScaledHeight => MatrixRows * _blankEnemy.ScaledHeight;
 
+        public int FrameWidth => MatrixColumns * _blankEnemy.FrameWidth;
+        public int FrameHeight => MatrixRows * _blankEnemy.FrameHeight;
+
         private readonly IEnemy _blankEnemy;
 
         public event Action<IList<IEnemy>> OnDestroy;
@@ -31,12 +33,14 @@ namespace Match3GameForest.Entities
 
         public GameFieldWrapper(IEnemyFactory enemyFactory, IBonusFactory bonusManager)
         {
+            Hidden = false;
             _enemyFactory = enemyFactory;
             _bonusManager = bonusManager;
             MatrixRows = MatrixColumns = 0;
             GenerateField(MatrixRows, MatrixColumns);
             _blankEnemy = _enemyFactory.Build();
             _blankEnemy.Destroy();
+            Position = Vector2.Zero;
         }
 
         public void GenerateField(int matrixRows, int matrixColumns)
@@ -46,6 +50,15 @@ namespace Match3GameForest.Entities
             FillMatrix();
             _bonusManager.Clear();
             _updateSeries = false;
+        }
+
+        public Rectangle GetBounds()
+        {
+            return new Rectangle(
+                0,
+                0,
+                ScaledWidth,
+                ScaledHeight);
         }
 
         private void FillMatrix()
@@ -170,6 +183,8 @@ namespace Match3GameForest.Entities
 
         public void Draw(GameTime gameTime)
         {
+            if (Hidden) return;
+
             foreach (var enemy in FieldMatrix) {
                 enemy.Draw(gameTime);
             }
@@ -303,6 +318,17 @@ namespace Match3GameForest.Entities
             return new FieldSeries(field);
         }
 
+        public bool Collide(ICollided p2)
+        {
+            var r1 = GetBounds();
+            var r2 = p2.GetBounds();
+
+            return r1.Intersects(r2);
+        }
+
         public int Score => GetMatchSeries().Score;
+
+        public Vector2 Position { get; set; }
+        public bool Hidden { get; set; }
     }
 }

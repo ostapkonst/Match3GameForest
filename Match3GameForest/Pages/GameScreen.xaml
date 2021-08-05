@@ -17,6 +17,7 @@
             <Setter Property="FontFamily" Value="{StaticResource MetricWebRegular}" />
             <Setter Property="FontSize" Value="17" />
             <Setter Property="Background" Value="{x:Null}" />
+            <Setter Property="FontWeight" Value="Bold" />
         </Style>
     </Page.Resources>
 

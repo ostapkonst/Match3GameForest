@@ -61,15 +61,22 @@ namespace Match3GameForest.Entities
             }
         }
 
+        public bool Collide(ICollided p2)
+        {
+            var r1 = GetBounds();
+            var r2 = p2.GetBounds();
+
+            return r1.Intersects(r2);
+        }
+
         public DateTime TouchedTime { get; private set; }
 
         public event Action OnDestroy;
 
         public void Destroy()
         {
-            if (!IsActive) return;
             IsActive = false;
-            Hidden = Paused = true;
+            Hidden = true;
             OnDestroy?.Invoke();
         }
     }

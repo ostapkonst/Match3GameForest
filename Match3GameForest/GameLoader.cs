@@ -159,7 +159,7 @@ namespace Match3GameForest
             GraphicsDevice.Clear(Color.White);
 
             if (GameData.State == GameState.Play) {
-                _spriteBatch.Begin();
+                _spriteBatch.Begin(_screen);
                 _gameField.Draw(gameTime);
                 OnDraw?.Invoke(GameData);
                 _spriteBatch.End();

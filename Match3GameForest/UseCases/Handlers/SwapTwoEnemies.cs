@@ -1,8 +1,6 @@
 ﻿using Match3GameForest.Entities;
 using Match3GameForest.Core;
-using System;
 using Match3GameForest.Config;
-using System.Diagnostics;
 
 namespace Match3GameForest.UseCases
 {
