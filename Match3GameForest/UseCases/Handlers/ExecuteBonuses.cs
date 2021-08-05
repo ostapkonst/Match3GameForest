@@ -122,7 +122,7 @@ namespace Match3GameForest.UseCases
 
             var allActiveBonuses = _bonuses.GetActiveBonuses();
             foreach (var bonus in allActiveBonuses) {
-                switch (bonus) { // TODO: Вынести в методы классов
+                switch (bonus) {
                     case BombBonus bomb:
                         BombAnimation(bomb);
                         break;

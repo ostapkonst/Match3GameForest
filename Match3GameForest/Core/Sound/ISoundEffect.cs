@@ -6,5 +6,7 @@
         bool IsLooped { get; set; }
         void Play();
         void Stop();
+        void Pause();
+        void Resume();
     }
 }

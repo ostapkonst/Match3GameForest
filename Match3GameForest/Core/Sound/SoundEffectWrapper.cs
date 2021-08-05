@@ -26,5 +26,7 @@ namespace Match3GameForest.Core
 
         public void Play() => _soundInstance.Play();
         public void Stop() => _soundInstance.Stop();
+        public void Pause() => _soundInstance.Pause();
+        public void Resume() => _soundInstance.Resume();
     }
 }

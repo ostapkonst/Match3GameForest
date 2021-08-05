@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,9 +44,10 @@ namespace Match3GameForest
             }
         }
 
-        private void playButton_Click(object sender, RoutedEventArgs e)
+        private void StartMatch3()
         {
-            var pi = new GameSettings() {
+            var pi = new GameSettings()
+            {
                 MatrixRows = (int)rowsList.SelectedValue,
                 MatrixColumns = (int)colsList.SelectedValue,
                 PlayingDuration = (timeList.SelectedIndex + 1) * 30,
@@ -54,6 +55,11 @@ namespace Match3GameForest
             };
 
             Frame.Navigate(typeof(GameScreen), pi);
+        }
+
+        private void playButton_Click(object sender, RoutedEventArgs e)
+        {
+            StartMatch3();
         }
     }
 }

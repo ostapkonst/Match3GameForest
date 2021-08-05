@@ -70,10 +70,34 @@ namespace Match3GameForest
             _ = _currentWindows.RunTaskAsync(func);
         }
 
-        private void exitButton_Click(object sender, RoutedEventArgs e)
+        private async void exitButton_Click(object sender, RoutedEventArgs e)
         {
-            _game.StopGame();
-            Frame.Navigate(typeof(GameOver), _game.GameData);
+            var dialog = new ContentDialog()
+            {
+                Title = "Confirmation of action",
+                Content = "Are you sure you want to complete the game?",
+                PrimaryButtonText = "Exit",
+                SecondaryButtonText = "Restart",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary
+            };
+
+            _game.PauseGame();
+
+            var result = await dialog.ShowAsync();
+
+            switch (result) {
+                case ContentDialogResult.Primary:
+                    _game.StopGame();
+                    Frame.Navigate(typeof(GameOver), _game.GameData);
+                    break;
+                case ContentDialogResult.Secondary:
+                    _game.RestartGame();
+                    break;
+                default:
+                    _game.ResumeGame();
+                    break;
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using Match3GameForest.Core;
 using Match3GameForest.Entities;
 using Match3GameForest.Config;
@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using Match3GameForest.UseCases;
-using System.Threading.Tasks;
 
 namespace Match3GameForest
 {
@@ -17,7 +16,6 @@ namespace Match3GameForest
         private ISpriteBatch _spriteBatch;
         private GameLoopWrapper _gameLoop;
         private IAnimation _animateManager;
-        public GameSettings GameData { get; private set; }
         private IGameField _gameField;
         private IBonusFactory _bonusFactory;
         private ITimer _timer;
@@ -25,8 +23,10 @@ namespace Match3GameForest
         private readonly GraphicsDeviceManager _graphics;
         private MouseState _currentMouseState;
         private MouseState _previousMouseState;
-
         private ISoundEffect _soundEffect;
+
+        public GameSettings GameData { get; private set; }
+        public bool Paused { get; private set; }
 
         public event Action<GameSettings> OnUpdate;
         public event Action<GameSettings> OnDraw;
@@ -62,7 +62,7 @@ namespace Match3GameForest
 
             _gameLoop = new GameLoopWrapper(cm);
 
-            _timer.OnFinish += StopGame;
+            _timer.OnFinish += () => StopGame(true);
         }
 
         private ISoundEffect PrepareSound(IContentManager cm)
@@ -88,33 +88,68 @@ namespace Match3GameForest
             return cm;
         }
 
-        public void StartGame(GameSettings pi)
+        public void StartGame(GameSettings pi, bool executeEvent = false)
         {
+            Paused = false;
+
             _gameLoop.Dispose();       // Порядок запуска 
             _animateManager.Dispose(); // важен
 
-            GameData.MatrixColumns = pi.MatrixColumns;
-            GameData.MatrixRows = pi.MatrixRows;
-            GameData.PlayingDuration = pi.PlayingDuration;
-            GameData.PlaySound = pi.PlaySound;
+            if (pi != null) { // Запуск со значениями по умолчанию
+                GameData.MatrixColumns = pi.MatrixColumns;
+                GameData.MatrixRows = pi.MatrixRows;
+                GameData.PlayingDuration = pi.PlayingDuration;
+                GameData.PlaySound = pi.PlaySound;
+            }
+
             if (GameData.PlaySound) {
                 _soundEffect.Play();
             }
 
             GameData.State = GameState.Init;
 
-            OnStart?.Invoke();
+            if (executeEvent) {
+                OnStart?.Invoke();
+            }
         }
 
-        public void StopGame()
+        public void RestartGame()
         {
+            StopGame(false);
+            StartGame(null, false);
+        }
+
+        public void StopGame(bool executeEvent = true)
+        {
+            Paused = true;
+
             if (GameData.PlaySound) {
                 _soundEffect.Stop();
             }
 
             GameData.State = GameState.Finish;
 
-            OnStop?.Invoke();
+            if (executeEvent) {
+                OnStop?.Invoke();
+            }
+        }
+
+        public void PauseGame()
+        {
+            Paused = true;
+
+            if (GameData.PlaySound) {
+                _soundEffect.Pause();
+            }
+        }
+
+        public void ResumeGame()
+        {
+            Paused = false;
+
+            if (GameData.PlaySound) {
+                _soundEffect.Resume();
+            }
         }
 
         private GameInputState UpdateInputStates(GameTime gameTime)
@@ -138,6 +173,9 @@ namespace Match3GameForest
         protected override void Update(GameTime gameTime)
         {
             var currentGameState = UpdateInputStates(gameTime);
+            _screen.Update(currentGameState, _gameField);
+
+            if (Paused) return;
 
             _animateManager.Update(currentGameState);
 
@@ -146,7 +184,6 @@ namespace Match3GameForest
             }
 
             if (GameData.State == GameState.Play) {
-                _screen.Update(currentGameState, _gameField);
                 _gameField.Update(currentGameState);
                 OnUpdate?.Invoke(GameData);
             }

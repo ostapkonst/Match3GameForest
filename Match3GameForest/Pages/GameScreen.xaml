@@ -32,12 +32,12 @@
 
             <RelativePanel RelativePanel.AlignVerticalCenterWithPanel="True" 
                            Margin="5,0,0,0">
-                <TextBlock x:Name="textScore" 
-                           Text="Score" 
-                           Style="{StaticResource TextBlockStyle}"/>
                 <TextBlock x:Name="textTimeLeft" 
                            Text="Time left" 
-                           RelativePanel.Below ="textScore"
+                           Style="{StaticResource TextBlockStyle}"/>
+                <TextBlock x:Name="textScore" 
+                           Text="Score" 
+                           RelativePanel.Below ="textTimeLeft"
                            Style="{StaticResource TextBlockStyle}"/>
             </RelativePanel>
         </RelativePanel>
