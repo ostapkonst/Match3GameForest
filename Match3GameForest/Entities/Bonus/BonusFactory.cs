@@ -9,7 +9,7 @@ namespace Match3GameForest.Entities
     {
         private readonly IBonus[] _bonuses;
 
-        private IList<IBonus> _createdBonuses;
+        private readonly IList<IBonus> _createdBonuses;
 
         public float Scale { get; set; } = 0.5f;
 

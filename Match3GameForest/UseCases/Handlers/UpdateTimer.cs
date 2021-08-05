@@ -14,7 +14,6 @@ namespace Match3GameForest.UseCases
             _animationManager = contentManager.Get<IAnimation>("animation");
             _settings = contentManager.Get<GameSettings>("settings");
             _timer = contentManager.Get<ITimer>("timer");
-
         }
 
         public void HandleUpdate(GameInputState state)

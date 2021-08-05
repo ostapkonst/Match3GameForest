@@ -21,6 +21,27 @@ namespace Match3GameForest.UseCases
             _bonuses = contentManager.Get<IBonusFactory>("bonuses");
         }
 
+        private void DestroyAnimation(IAnimation wrap, IEnemy enemy)
+        {
+            enemy.Hidden = false;
+            var anim1 = new RescaleEffect(enemy, 1f, 0.6f, 100);
+            anim1.Next += () =>
+            {
+                enemy.Hidden = true;
+                _settings.GameScore += enemy.Prize;
+            };
+            wrap.Add(anim1);
+        }
+
+        private void DestroyAnimation(IList<IEnemy> series)
+        {
+            var wrap = new AnimationWrapper();
+            foreach (var enemy in series) {
+                DestroyAnimation(wrap, enemy);
+            }
+            _animationManager.Add(wrap);
+        }
+
         private void BombAnimation(BombBonus bomb)
         {
             var act1 = new WaiteEffect(250); // Задержка по ТЗ
@@ -44,22 +65,25 @@ namespace Match3GameForest.UseCases
 
                         if (!enemy.IsActive) continue;
 
-                        enemy.Destroy(); // Добавить анимацию?
-                        _settings.GameScore += enemy.Prize;
+                        enemy.Destroy();
+
+                        enemies.Add(enemy);
                     }
                 }
+
+                DestroyAnimation(enemies);
             };
 
             _animationManager.Add(act1);
         }
 
-        private void RocketFlyAnimation(Destroyer d1, IAnimation wrap)
+        private void RocketFlyAnimation(Destroyer destr, IAnimation wrap)
         {
-            var act1 = new MoveDirectionEffect(d1, 450, _gameField);
+            var act1 = new MoveDirectionEffect(destr, 350, _gameField);
 
             act1.Next += () =>
             {
-                d1.Destroy();
+                destr.Destroy();
             };
 
             act1.Parallel += () =>
@@ -69,10 +93,10 @@ namespace Match3GameForest.UseCases
                 // TODO: Оптимизировать проверку столкновений
                 foreach (var enemy in field) {
                     if (!enemy.IsActive) continue;
-                    if (!enemy.Collide(d1)) continue;
+                    if (!enemy.Collide(destr)) continue;
 
-                    enemy.Destroy(); // Добавить анимацию?
-                    _settings.GameScore += enemy.Prize;
+                    enemy.Destroy();
+                    DestroyAnimation(_animationManager, enemy);
                 }
             };
 
